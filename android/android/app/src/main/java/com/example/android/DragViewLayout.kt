@@ -1,36 +1,18 @@
 package com.example.android
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.PixelFormat
-import android.os.Build
 import android.util.AttributeSet
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.view.WindowManager
-import android.widget.RelativeLayout
-import androidx.annotation.RequiresApi
 import kotlin.math.abs
 
 
 open class DragViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
-    RelativeLayout(context, attrs, defStyleAttr) {
-    //view所在位置
-    var mLastX = 0
-    var mLastY = 0
-
-    //屏幕高宽
-    var mScreenWidth: Int
-    var mScreenHeight: Int
-
-    var mStatusBarHeight:Int
-
-    //view高宽
-    var mWidth = 0
-    var mHeight = 0
+    FloatLayout(context, attrs, defStyleAttr) {
 
     /**
      * 是否在拖拽过程中
@@ -42,8 +24,6 @@ open class DragViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: 
      * @param context
      */
     var mTouchSlop = 0
-    var floatLayoutParams: WindowManager.LayoutParams? = null
-    var mWindowManager: WindowManager
 
     //手指触摸位置
     private var xInScreen = 0f
@@ -74,7 +54,7 @@ open class DragViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: 
                 yInScreen = event.rawY
                 mLastX = event.rawX.toInt()
                 mLastY = event.rawY.toInt()
-                updateFloatPosition()
+                updateFloatPosition(false)
             }
             MotionEvent.ACTION_UP -> if (isDrag) {
                 //执行贴边
@@ -88,7 +68,7 @@ open class DragViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: 
     }
 
     //更新悬浮球位置
-    fun updateFloatPosition() {
+    fun updateFloatPosition(reset:Boolean) {
         var x = (xInScreen - xInView).toInt()
         var y = (yInScreen - yInView).toInt() - mStatusBarHeight
         if (y < 0) {
@@ -103,71 +83,34 @@ open class DragViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: 
         if (x > mScreenWidth - mWidth) {
             x = mScreenWidth - mWidth
         }
-        Log.d("position","mScreenWidth$mScreenWidth mScreenHeight$mScreenHeight x:$x y:$y  xInScreen:$xInScreen yInScreen:$yInScreen xInView$xInView yInView$yInView")
+        if (reset){
+            x = mScreenWidth - mWidth
+            y = (mScreenHeight * 0.4).toInt()
+        }
         floatLayoutParams!!.x = x
         floatLayoutParams!!.y = y
         mWindowManager.updateViewLayout(this, floatLayoutParams)
     }
 
-    //执行贴边动画
-    fun startAnim() {
-        val valueAnimator: ValueAnimator
-        if (floatLayoutParams!!.x < mScreenWidth / 2) {
-            valueAnimator = ValueAnimator.ofInt(floatLayoutParams!!.x, 0)
-        } else {
-            valueAnimator = ValueAnimator.ofInt(floatLayoutParams!!.x, mScreenWidth - mWidth)
-        }
-        valueAnimator.duration = 200
-        valueAnimator.addUpdateListener { animation ->
-            floatLayoutParams!!.x = animation.animatedValue as Int
-            mWindowManager.updateViewLayout(this@DragViewLayout, floatLayoutParams)
-        }
-        valueAnimator.start()
-    }
-
     //悬浮球显示
-    fun show() {
+    override fun show() {
         floatLayoutParams = WindowManager.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                     or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             PixelFormat.RGBA_8888)
         floatLayoutParams!!.gravity = Gravity.LEFT or Gravity.TOP
-        floatLayoutParams!!.x = 0
+        floatLayoutParams!!.x = mScreenWidth - 144
         floatLayoutParams!!.y = (mScreenHeight * 0.4).toInt()
-        floatLayoutParams!!.width = 120
-        floatLayoutParams!!.height = 120
+        floatLayoutParams!!.width = 144
+        floatLayoutParams!!.height = 144
 
         mWindowManager.addView(this, floatLayoutParams)
     }
 
-    fun remove(){
-        mWindowManager.removeView(this)
-    }
 
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        super.onLayout(changed, l, t, r, b)
-        if (mWidth == 0) {
-            //获取悬浮球高宽
-            mWidth = width
-            mHeight = height
-        }
-    }
 
-    fun getStatusHeight(): Int {
-        var statusHeight = -1
-        try {
-            val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-            if (resourceId > 0) {
-                statusHeight = resources.getDimensionPixelSize(resourceId)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return statusHeight
-    }
-
-    fun resetSize(){
+    override fun resetSize(){
         mScreenWidth = context.resources.displayMetrics.widthPixels
         mScreenHeight = context.resources.displayMetrics.heightPixels
         mStatusBarHeight = getStatusHeight()
@@ -181,7 +124,5 @@ open class DragViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: 
         mScreenWidth = context.resources.displayMetrics.widthPixels
         mScreenHeight = context.resources.displayMetrics.heightPixels
         mStatusBarHeight = getStatusHeight()
-        Log.d("屏幕尺寸",mScreenWidth.toString()+"X"+mScreenHeight.toString())
-        Log.d("状态栏高度",mStatusBarHeight.toString())
     }
 }

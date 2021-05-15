@@ -8,9 +8,11 @@ import android.hardware.SensorManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.provider.Settings
 import android.util.Log
 import android.view.OrientationEventListener
+import android.view.WindowManager
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import io.flutter.embedding.android.FlutterActivity
@@ -24,6 +26,11 @@ class MainActivity: FlutterActivity() {
     private fun checkPermission():Boolean{
         Log.d("info","检查权限")
         return !(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this))
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        super.onCreate(savedInstanceState, persistentState)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
