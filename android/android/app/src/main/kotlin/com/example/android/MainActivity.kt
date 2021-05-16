@@ -1,18 +1,14 @@
 package com.example.android
 
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.hardware.SensorManager
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.PersistableBundle
 import android.provider.Settings
 import android.util.Log
-import android.view.OrientationEventListener
-import android.view.WindowManager
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import io.flutter.embedding.android.FlutterActivity
@@ -20,17 +16,38 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 
-class MainActivity: FlutterActivity() {
+class MainActivity: FlutterActivity() , KeyboardHeightObserver {
     private val CHANNEL = "com.septem1997.flutter/barrageRoom"
-
+    private var mKeyboardHeightProvider:KeyboardHeightProvider = KeyboardHeightProvider(this)
     private fun checkPermission():Boolean{
         Log.d("info","检查权限")
         return !(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this))
     }
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         super.onCreate(savedInstanceState, persistentState)
+        Handler().post { mKeyboardHeightProvider.start() }
+    }
+
+    override fun onKeyboardHeightChanged(height: Int, orientation: Int) {
+        val or = if (orientation == Configuration.ORIENTATION_PORTRAIT) "portrait" else "landscape"
+        Log.d(null,
+            "onKeyboardHeightChanged in pixels: $height $or")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mKeyboardHeightProvider.setKeyboardHeightObserver(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mKeyboardHeightProvider.setKeyboardHeightObserver(null)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mKeyboardHeightProvider.close()
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
