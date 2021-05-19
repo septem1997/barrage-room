@@ -1,9 +1,8 @@
-package com.example.android
+package com.example.android.layouts
 
 import android.content.Context
-import android.view.View.OnClickListener
 import android.widget.ImageView
-import android.widget.Toast
+import com.example.android.R
 
 
 class BarrageFloatButton(context: Context) : DragViewLayout(context) {

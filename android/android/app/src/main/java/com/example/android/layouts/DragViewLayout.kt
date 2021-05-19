@@ -1,9 +1,9 @@
-package com.example.android
+package com.example.android.layouts
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.PixelFormat
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.ViewConfiguration
@@ -29,10 +29,25 @@ open class DragViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: 
     private var xInScreen = 0f
     private var yInScreen = 0f
     private var xInView = 0f
-    var yInView = 0f
+    private var yInView = 0f
 
     constructor(context: Context) : this(context, null) {}
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0) {}
+
+
+    fun alignToEdge() {
+        val valueAnimator: ValueAnimator = if (floatLayoutParams!!.x < mScreenWidth / 2) {
+            ValueAnimator.ofInt(floatLayoutParams!!.x, 0)
+        } else {
+            ValueAnimator.ofInt(floatLayoutParams!!.x, mScreenWidth - mWidth)
+        }
+        valueAnimator.duration = 200
+        valueAnimator.addUpdateListener { animation ->
+            floatLayoutParams!!.x = animation.animatedValue as Int
+            mWindowManager.updateViewLayout(this, floatLayoutParams)
+        }
+        valueAnimator.start()
+    }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
@@ -58,7 +73,7 @@ open class DragViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: 
             }
             MotionEvent.ACTION_UP -> if (isDrag) {
                 //执行贴边
-                startAnim()
+                alignToEdge()
                 isDrag = false
             }
             else -> {
@@ -67,7 +82,6 @@ open class DragViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: 
         return super.dispatchTouchEvent(event)
     }
 
-    //更新悬浮球位置
     fun updateFloatPosition(reset:Boolean) {
         var x = (xInScreen - xInView).toInt()
         var y = (yInScreen - yInView).toInt() - mStatusBarHeight
@@ -92,8 +106,8 @@ open class DragViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: 
         mWindowManager.updateViewLayout(this, floatLayoutParams)
     }
 
-    //悬浮球显示
     override fun show() {
+        super.show()
         floatLayoutParams = WindowManager.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
@@ -108,15 +122,6 @@ open class DragViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: 
         mWindowManager.addView(this, floatLayoutParams)
     }
 
-
-
-    override fun resetSize(){
-        mScreenWidth = context.resources.displayMetrics.widthPixels
-        mScreenHeight = context.resources.displayMetrics.heightPixels
-        mStatusBarHeight = getStatusHeight()
-        Log.d("屏幕尺寸",mScreenWidth.toString()+"X"+mScreenHeight.toString())
-        Log.d("状态栏高度",mStatusBarHeight.toString())
-    }
 
     init {
         mTouchSlop = ViewConfiguration.get(context).scaledTouchSlop

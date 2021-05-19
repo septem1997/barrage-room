@@ -9,7 +9,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="android">
         <service
-            android:name=".FloatService"
+            android:name=".service.FloatService"
             android:enabled="true"
             android:exported="true" />
 
