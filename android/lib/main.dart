@@ -102,24 +102,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       ],
     );
 
-    var chatDialog = Column(
+    var chatDialog = ListView(
       children: [
-        Expanded(
-          flex: 1,
-          child: ListView(
-            children: [
-              Text("消息1"),
-              Text("消息2"),
-              Text("消息3")
-            ],
-          )
-        ),
-        TextField(
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: '请输入弹幕内容',
-          ),
-        )
+        Text("消息1"),
+        Text("消息2"),
+        Text("消息3")
       ],
     );
 

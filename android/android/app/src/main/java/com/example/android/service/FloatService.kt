@@ -10,12 +10,11 @@ import com.example.android.layouts.BarrageFloatButton
 import com.example.android.layouts.BarrageLayout
 import com.example.android.layouts.InputViewLayout
 
-
 class FloatService : Service() {
     private var lastOrientation:Int = 0
     lateinit var floatButton: BarrageFloatButton
     lateinit var inputLayout: InputViewLayout
-    lateinit var maskLayout: BarrageLayout
+    lateinit var barrageLayout: BarrageLayout
     override fun onBind(intent: Intent): IBinder {
         TODO("Return the communication channel to the service.")
     }
@@ -24,13 +23,17 @@ class FloatService : Service() {
         super.onCreate()
         floatButton = BarrageFloatButton(applicationContext)
         inputLayout = InputViewLayout(applicationContext)
-        maskLayout = BarrageLayout(applicationContext)
+        barrageLayout = BarrageLayout(applicationContext)
         floatButton.show()
         floatButton.setOnClickListener {
             inputLayout.setLayoutVisible(!inputLayout.isFloatLayoutVisible)
         }
         inputLayout.setOnClickListener{
             inputLayout.remove()
+        }
+        barrageLayout.show()
+        inputLayout.btn.setOnClickListener {
+            barrageLayout.addDanmaku()
         }
     }
 
