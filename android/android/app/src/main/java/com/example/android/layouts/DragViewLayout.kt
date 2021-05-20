@@ -72,7 +72,6 @@ open class DragViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: 
                 updateFloatPosition(false)
             }
             MotionEvent.ACTION_UP -> if (isDrag) {
-                //执行贴边
                 alignToEdge()
                 isDrag = false
             }

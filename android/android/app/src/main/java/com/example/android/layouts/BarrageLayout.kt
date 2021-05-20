@@ -97,7 +97,7 @@ class BarrageLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
             }
         })
         mDanmakuView.prepare(mParser, mContext)
-        mDanmakuView.showFPS(true)
+//        mDanmakuView.showFPS(true)
         mDanmakuView.enableDanmakuDrawingCache(true)
 
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)

@@ -7,7 +7,7 @@
 
     <application
         android:icon="@mipmap/ic_launcher"
-        android:label="android">
+        android:label="还没想好名字">
         <service
             android:name=".service.FloatService"
             android:enabled="true"

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart';
 
 void main() {
   runApp(MyApp());
@@ -47,19 +49,34 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
-  static const platform = const MethodChannel('com.septem1997.flutter/barrageRoom');
+  static const platform =
+      const MethodChannel('com.septem1997.flutter/barrageRoom');
   var _hasPermission = false;
-  var msgList = ["消息1","消息2","消息3"];
+  var msgList = ["消息1", "消息2", "消息3"];
   String _tips = '请启用悬浮窗权限以正常使用功能';
 
   Future<void> _checkPermission() async {
-    bool hasPermission =  await platform.invokeMethod('checkPermission');
-    if(hasPermission){
+    bool hasPermission = await platform.invokeMethod('checkPermission');
+    if (hasPermission) {
       platform.invokeMethod('showFloatingWindow');
     }
     setState(() {
       _hasPermission = hasPermission;
     });
+  }
+
+  initSocket() {
+    IO.Socket socket = IO.io(
+        'https://192.168.0.106:4000',
+        OptionBuilder().setTransports(['websocket']) // for Flutter or Dart VM
+            .build());
+    socket.onConnect((_) {
+      print('connect');
+      socket.emit('msg', 'test');
+    });
+    socket.on('event', (data) => print(data));
+    socket.onDisconnect((_) => print('disconnect'));
+    socket.on('fromServer', (_) => print(_));
   }
 
   _turnOnPermission() {
@@ -71,6 +88,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _checkPermission();
+    initSocket();
   }
 
   @override
@@ -87,10 +105,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
   }
 
-
-
   Widget build(BuildContext context) {
-
     var checkPermissionTips = Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -103,17 +118,12 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     );
 
     var chatDialog = ListView(
-      children: [
-        Text("消息1"),
-        Text("消息2"),
-        Text("消息3")
-      ],
+      children: [Text("消息1"), Text("消息2"), Text("消息3")],
     );
-
 
     return Material(
       child: Center(
-        child: _hasPermission?chatDialog:checkPermissionTips,
+        child: _hasPermission ? chatDialog : checkPermissionTips,
       ),
     );
   }
