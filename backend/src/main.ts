@@ -16,7 +16,7 @@ async function bootstrap() {
 
   const server = app.getHttpServer()
   const io = new Server(server,{
-    allowEIO3:true,
+    // allowEIO3:true,
     cors:{
       origin:'*'
     }
@@ -28,6 +28,7 @@ async function bootstrap() {
     socket.on("sendMsg",(data)=>{
       io.emit("receiveMsg",data)
     })
+    io.emit("connectSuccess",null)
   });
   await app.listen(4000);
 }
