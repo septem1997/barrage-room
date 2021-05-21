@@ -7,15 +7,16 @@ import * as express from 'express';
 
 
 async function bootstrap() {
-  const httpsOptions = {
-    https:true,
-    key: fs.readFileSync('./secrets/localhost+2-key.pem'),
-    cert: fs.readFileSync('./secrets/localhost+2.pem'),
-  };
-  const app = await NestFactory.create(AppModule, { httpsOptions });
+  // const httpsOptions = {
+  //   https:true,
+  //   key: fs.readFileSync('./secrets/localhost+3-key.pem'),
+  //   cert: fs.readFileSync('./secrets/localhost+3.pem'),
+  // };
+  const app = await NestFactory.create(AppModule);
 
   const server = app.getHttpServer()
   const io = new Server(server,{
+    allowEIO3:true,
     cors:{
       origin:'*'
     }
@@ -23,6 +24,10 @@ async function bootstrap() {
 
   io.on('connection',function (socket) {
     console.log(socket.id)
+
+    socket.on("sendMsg",(data)=>{
+      io.emit("receiveMsg",data)
+    })
   });
   await app.listen(4000);
 }
