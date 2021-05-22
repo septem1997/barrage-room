@@ -4,6 +4,7 @@ import { Server } from 'socket.io'
 import * as fs from 'fs';
 import * as https from 'https';
 import * as express from 'express';
+import * as http from 'http';
 
 
 async function bootstrap() {
@@ -32,4 +33,26 @@ async function bootstrap() {
   });
   await app.listen(4000);
 }
-bootstrap();
+// bootstrap();
+function initSocketIO(){
+  const app = express();
+  const server = http.createServer(app);
+  server.listen(4000);
+
+  const io = new Server(server,{
+    cors:{
+      origin:'*'
+    }
+  });
+
+  io.on('connection',function (socket) {
+    console.log(socket.id)
+
+    socket.on("sendMsg",(data)=>{
+      io.emit("receiveMsg",data)
+    })
+    io.emit("connectSuccess",null)
+  });
+
+}
+initSocketIO()
