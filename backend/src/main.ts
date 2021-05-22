@@ -33,7 +33,7 @@ async function bootstrap() {
   });
   await app.listen(4000);
 }
-// bootstrap();
+bootstrap();
 function initSocketIO(){
   const app = express();
   const server = http.createServer(app);
@@ -55,4 +55,4 @@ function initSocketIO(){
   });
 
 }
-initSocketIO()
+// initSocketIO()
