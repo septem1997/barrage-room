@@ -1,16 +1,5 @@
 # android
 
-A new Flutter project.
+## 全局弹幕聊天工具
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+一个全局弹幕聊天工具，适用于和小伙伴一起看电影，看直播或者玩游戏等场景，在这种场景下你想和小伙伴分享或者吐槽时可直接发送弹幕消息，免去来回切出微信等繁琐步骤
