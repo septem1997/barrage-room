@@ -8,12 +8,12 @@ import * as http from 'http';
 
 
 async function bootstrap() {
-  // const httpsOptions = {
-  //   https:true,
-  //   key: fs.readFileSync('./secrets/localhost+3-key.pem'),
-  //   cert: fs.readFileSync('./secrets/localhost+3.pem'),
-  // };
-  const app = await NestFactory.create(AppModule);
+  const httpsOptions = {
+    https:true,
+    key: fs.readFileSync('./secrets/banana.key'),
+    cert: fs.readFileSync('./secrets/banana.crt'),
+  };
+  const app = await NestFactory.create(AppModule,{httpsOptions});
 
   const server = app.getHttpServer()
   const io = new Server(server,{
@@ -34,25 +34,3 @@ async function bootstrap() {
   await app.listen(4000);
 }
 bootstrap();
-function initSocketIO(){
-  const app = express();
-  const server = http.createServer(app);
-  server.listen(4000);
-
-  const io = new Server(server,{
-    cors:{
-      origin:'*'
-    }
-  });
-
-  io.on('connection',function (socket) {
-    console.log(socket.id)
-
-    socket.on("sendMsg",(data)=>{
-      io.emit("receiveMsg",data)
-    })
-    io.emit("connectSuccess",null)
-  });
-
-}
-// initSocketIO()
