@@ -48,6 +48,7 @@ class FloatService : Service() {
         inputLayout.btn.setOnClickListener {
             onSendMsgListener?.onSendMsg(inputLayout.edit.text.toString())
             inputLayout.edit.text.clear()
+            inputLayout.remove()
         }
     }
 
