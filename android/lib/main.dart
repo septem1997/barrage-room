@@ -49,8 +49,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+  static const CHANNEL = 'com.septem1997.flutter/barrageRoom';
   static const platform =
-      const MethodChannel('com.septem1997.flutter/barrageRoom');
+      const MethodChannel(CHANNEL);
   var _hasPermission = false;
   var msgList = ["消息1", "消息2", "消息3"];
   String _tips = '请启用悬浮窗权限以正常使用功能';
@@ -67,16 +68,29 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   initSocket() {
     IO.Socket socket = IO.io(
-        'https://192.168.0.106:4000',
+        'https://banana.septem1997.online/',
         OptionBuilder().setTransports(['websocket']) // for Flutter or Dart VM
             .build());
     socket.onConnect((_) {
       print('connect');
-      socket.emit('msg', 'test');
     });
-    socket.on('event', (data) => print(data));
+    socket.on("receiveMsg", (data) => {
+      _onReceiveMsg(data)
+    });
     socket.onDisconnect((_) => print('disconnect'));
-    socket.on('fromServer', (_) => print(_));
+
+    BasicMessageChannel<String> _basicMessageChannel = BasicMessageChannel(CHANNEL, StringCodec());
+
+    _basicMessageChannel.setMessageHandler((String message) => Future<String>(() {
+      print('socket:sendMsg'+message);
+      socket.emit("sendMsg",message);
+      return "success";
+    }));
+
+  }
+
+  _onReceiveMsg(text){
+    platform.invokeMethod("receiveMsg",text);
   }
 
   _turnOnPermission() {

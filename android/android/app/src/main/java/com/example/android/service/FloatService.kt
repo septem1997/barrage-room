@@ -6,17 +6,30 @@ import android.content.res.Configuration
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import com.example.android.binder.FloatBinder
 import com.example.android.layouts.BarrageFloatButton
 import com.example.android.layouts.BarrageLayout
 import com.example.android.layouts.InputViewLayout
+
 
 class FloatService : Service() {
     private var lastOrientation:Int = 0
     lateinit var floatButton: BarrageFloatButton
     lateinit var inputLayout: InputViewLayout
     lateinit var barrageLayout: BarrageLayout
+    private var mBinder:FloatBinder = FloatBinder(this)
     override fun onBind(intent: Intent): IBinder {
-        TODO("Return the communication channel to the service.")
+        return mBinder
+    }
+
+    interface OnSendMsgListener {
+        fun onSendMsg(text: String)
+    }
+
+    private var onSendMsgListener: OnSendMsgListener? = null
+
+    fun setOnSendMsgListener(onSendMsgListener: OnSendMsgListener?) {
+        this.onSendMsgListener = onSendMsgListener
     }
 
     override fun onCreate() {
@@ -33,9 +46,15 @@ class FloatService : Service() {
         }
         barrageLayout.show()
         inputLayout.btn.setOnClickListener {
-            barrageLayout.addDanmaku()
+            onSendMsgListener?.onSendMsg(inputLayout.edit.text.toString())
+            inputLayout.edit.text.clear()
         }
     }
+
+    fun onReceiveMsg(text:String){
+        barrageLayout.addDanmaku(text)
+    }
+
 
 
     override fun onConfigurationChanged(newConfig: Configuration) {

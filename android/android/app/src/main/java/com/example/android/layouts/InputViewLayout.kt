@@ -19,7 +19,7 @@ import androidx.core.content.ContextCompat.getSystemService
 class InputViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
     FloatLayout(context, attrs, defStyleAttr) {
 
-    private val edit:EditText
+    val edit:EditText
     val btn:Button
 
     constructor(context: Context) : this(context, null) {}

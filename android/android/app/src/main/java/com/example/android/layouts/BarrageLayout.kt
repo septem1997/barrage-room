@@ -104,9 +104,9 @@ class BarrageLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         addView(mDanmakuView, layoutParams)
     }
 
-    fun addDanmaku() {
+    fun addDanmaku(text:String) {
         val danmaku = mContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL) ?: return
-        danmaku.text = "这是一条弹幕" + System.nanoTime()
+        danmaku.text = text
         danmaku.padding = 5
         danmaku.priority = 0 // 可能会被各种过滤器过滤并隐藏显示
         danmaku.isLive = true
@@ -115,7 +115,7 @@ class BarrageLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         danmaku.textColor = Color.RED
         danmaku.textShadowColor = Color.WHITE
         // danmaku.underlineColor = Color.GREEN;
-        danmaku.borderColor = Color.GREEN
+//        danmaku.borderColor = Color.GREEN
         mDanmakuView.addDanmaku(danmaku)
     }
 
