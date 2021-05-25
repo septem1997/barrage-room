@@ -31,7 +31,6 @@
     "bcrypt": "^5.0.0",
     "esdk-obs-nodejs": "^3.1.4",
     "fs-extra": "^9.0.1",
-    "http-proxy": "^1.18.1",
     "moment": "^2.27.0",
     "mysql": "^2.18.1",
     "passport": "^0.4.1",

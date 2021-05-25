@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -26,6 +29,37 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
+    );
+  }
+}
+
+
+class WillPopScopeTestRoute extends StatefulWidget {
+  @override
+  WillPopScopeTestRouteState createState() {
+    return new WillPopScopeTestRouteState();
+  }
+}
+
+class WillPopScopeTestRouteState extends State<WillPopScopeTestRoute> {
+  DateTime _lastPressedAt; //上次点击时间
+
+  @override
+  Widget build(BuildContext context) {
+    return new WillPopScope(
+        onWillPop: () async {
+          if (_lastPressedAt == null ||
+              DateTime.now().difference(_lastPressedAt) > Duration(seconds: 1)) {
+            //两次点击间隔超过1秒则重新计时
+            _lastPressedAt = DateTime.now();
+            return false;
+          }
+          return true;
+        },
+        child: Container(
+          alignment: Alignment.center,
+          child: Text("1秒内连续按两次返回键退出"),
+        )
     );
   }
 }
@@ -68,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   initSocket() {
     IO.Socket socket = IO.io(
-        'https://banana.septem1997.online/',
+        'http://192.168.25.107:4000/',
         OptionBuilder().setTransports(['websocket']) // for Flutter or Dart VM
             .build());
     socket.onConnect((_) {
@@ -127,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           child: Text('启用悬浮窗权限'),
           onPressed: _turnOnPermission,
         ),
-        Text(_tips),
+        Text(_tips)
       ],
     );
 
@@ -137,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
     return Material(
       child: Center(
-        child: _hasPermission ? chatDialog : checkPermissionTips,
+        child:WillPopScopeTestRoute(),
       ),
     );
   }
