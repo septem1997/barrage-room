@@ -1,10 +1,13 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './module/app.module';
 import { Server } from 'socket.io'
-import * as fs from 'fs';
+import { AllExceptionsFilter } from './config/any-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.useGlobalFilters(new AllExceptionsFilter())
+  app.enableCors()
 
   const server = app.getHttpServer()
   const io = new Server(server,{
