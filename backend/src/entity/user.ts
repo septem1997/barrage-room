@@ -11,5 +11,8 @@ export class User extends BaseEntity{
     nickname: string;
 
     @Column()
+    avatar: string;
+
+    @Column()
     password: string;
 }

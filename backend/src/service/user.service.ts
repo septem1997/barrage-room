@@ -52,9 +52,12 @@ export class UserService {
     user.password = newPass
     user.createTime = new Date().toISOString()
     user.nickname = userDto.nickname
+    user.avatar = ""
     await this.repository.save(user)
     return {
-      msg:'注册成功'
+      token:'Bearer '+this.jwtService.sign(userDto),
+      username:user.username,
+      nickname:user.nickname
     }
   }
 

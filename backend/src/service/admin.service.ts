@@ -50,7 +50,6 @@ export class AdminService {
     const newPass = await this.register(adminDto.password)
     user.username = adminDto.username
     user.password = newPass
-    user.phone = adminDto.phone
     user.createTime = new Date().toISOString()
     user.name = adminDto.name
     await this.repository.save(user)
