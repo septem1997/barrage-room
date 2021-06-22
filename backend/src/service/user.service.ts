@@ -50,7 +50,7 @@ export class UserService {
     const newPass = await this.register(userDto.password)
     user.username = userDto.username
     user.password = newPass
-    user.createTime = new Date().toISOString()
+    // user.createTime = new Date().toISOString()
     user.nickname = userDto.nickname
     user.avatar = ""
     await this.repository.save(user)

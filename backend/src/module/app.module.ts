@@ -7,6 +7,10 @@ import { ConfigModule } from '@nestjs/config';
 import { AdminModule } from './admin.module';
 import { Admin } from '../entity/admin';
 import { User } from '../entity/user';
+import { AppGateway } from '../app.gateway';
+import { RoomModule } from './room.module';
+import { RoomTag } from '../entity/roomTag';
+import { Room } from '../entity/room';
 
 @Module({
   imports: [
@@ -20,13 +24,14 @@ import { User } from '../entity/user';
       username: 'root',
       password: 'root',
       database: 'barrage_room',
-      entities: [Admin,User],
+      entities: [Admin,User,RoomTag,Room],
       synchronize: true,
     }),
     UserModule,
-    AdminModule
+    AdminModule,
+    RoomModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,AppGateway],
 })
 export class AppModule {}

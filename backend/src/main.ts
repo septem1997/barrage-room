@@ -11,22 +11,22 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter())
   app.enableCors()
 
-  const server = app.getHttpServer()
-  const io = new Server(server,{
-    allowEIO3:true,
-    cors:{
-      origin:'*'
-    }
-  });
-
-  io.on('connection',function (socket) {
-    console.log(socket.id)
-
-    socket.on("sendMsg",(data)=>{
-      io.emit("receiveMsg",data)
-    })
-    io.emit("connectSuccess",null)
-  });
+  // const server = app.getHttpServer()
+  // const io = new Server(server,{
+  //   allowEIO3:true,
+  //   cors:{
+  //     origin:'*'
+  //   }
+  // });
+  //
+  // io.on('connection',function (socket) {
+  //   console.log(socket.id)
+  //
+  //   socket.on("sendMsg",(data)=>{
+  //     io.emit("receiveMsg",data)
+  //   })
+  //   io.emit("connectSuccess",null)
+  // });
   await app.listen(4000);
 }
 bootstrap();

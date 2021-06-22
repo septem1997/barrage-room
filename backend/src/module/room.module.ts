@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Room } from '../entity/room';
-import { AdminController } from '../controller/admin.controller';
-import { AdminService } from '../service/admin.service';
-import { AdminJwtStrategy } from '../config/admin.jwt.strategy';
 import { RoomService } from '../service/room.service';
+import { RoomTag } from '../entity/roomTag';
+import { RoomController } from '../controller/room.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Room]),
+    TypeOrmModule.forFeature([RoomTag])
   ],
-  controllers:[Room],
+  controllers:[RoomController],
   providers:[RoomService]
 })
 export class RoomModule {
