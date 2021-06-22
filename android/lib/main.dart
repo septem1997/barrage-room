@@ -1,11 +1,32 @@
+import 'dart:convert';
 
-import 'package:android/chatRoute.dart';
-import 'package:android/login.dart';
+import 'package:android/model/user.dart';
+import 'package:android/routes/home.dart';
+import 'package:android/routes/login.dart';
+import 'package:android/store/userModel.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 
-void main() {
-  runApp(MyApp());
+Future<void> main() async {
+  // SharedPreferences.setMockInitialValues({});
+  var prefs = await SharedPreferences.getInstance();
+  print(prefs);
+  var userStr = prefs.getString('user');
+  print("userStr$userStr");
+  User user;
+  if(userStr!=null && userStr.isNotEmpty){
+    user = User.fromJson(json.decode(userStr));
+  }
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => UserModel(user, false),
+      child: MyApp(),
+    ),
+  );
+
 }
 
 class MyApp extends StatelessWidget {
@@ -26,7 +47,10 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: LoginRoute(),
+      routes: {
+        "/": (context) => HomeRoute(),
+        "/login": (context) => LoginRoute(),
+      },
     );
   }
 }
