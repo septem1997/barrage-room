@@ -1,15 +1,7 @@
-import 'dart:convert';
-
-import 'package:android/model/user.dart';
-import 'package:android/routes/chat.dart';
 import 'package:android/routes/hall.dart';
-import 'package:android/routes/login.dart';
 import 'package:android/routes/my.dart';
 import 'package:android/routes/room.dart';
-import 'package:android/store/userModel.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeRoute extends StatefulWidget {
   @override
@@ -19,6 +11,14 @@ class HomeRoute extends StatefulWidget {
 class _HomeRouteState extends State<HomeRoute> {
   var pageList = [RoomRoute(), HallRoute(), MyRoute()];
   var currentIndex = 1;
+  PageController _pageController;
+
+  @override
+  void initState() {
+    this._pageController =
+        PageController(initialPage: this.currentIndex, keepPage: true);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +28,7 @@ class _HomeRouteState extends State<HomeRoute> {
         onTap: (value) {
           setState(() {
             currentIndex = value;
+            _pageController.jumpToPage(value);
           });
         },
         currentIndex: currentIndex,
@@ -38,7 +39,10 @@ class _HomeRouteState extends State<HomeRoute> {
               icon: Icon(Icons.account_circle_outlined), label: "我的")
         ],
       ),
-      body: pageList[currentIndex],
+      body: PageView(
+          children: pageList,
+          controller: _pageController,
+          physics: NeverScrollableScrollPhysics()),
     );
   }
 }

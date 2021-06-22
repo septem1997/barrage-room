@@ -20,4 +20,4 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'nickname': instance.nickname,
       'token': instance.token,
       'password': instance.password,
-};
+    };

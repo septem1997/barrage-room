@@ -199,7 +199,9 @@ class _LoginRouteState extends State<LoginRoute> {
         child: Form(
           key: _formKey,
           autovalidate: true,
-          child: Column(children: buildForm()),
+          child: SingleChildScrollView(
+            child: Column(children: buildForm()),
+          ),
         ),
       ),
     );
