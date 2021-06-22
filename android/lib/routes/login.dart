@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:android/common/Request.dart';
+import 'package:android/common/request.dart';
 import 'package:android/model/user.dart';
 import 'package:android/routes/chat.dart';
 import 'package:android/store/userModel.dart';
@@ -46,9 +46,9 @@ class _LoginRouteState extends State<LoginRoute> {
       if (!unameFocusNode.hasFocus) {
         print("uname失去焦点");
         if (_unameController.text.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("请输入用户名"),
-          ));
+          // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          //   content: Text("请输入用户名"),
+          // ));
           return;
         }
         checkUserExist();
@@ -229,11 +229,6 @@ class _LoginRouteState extends State<LoginRoute> {
   Future<void> saveUser(data) async {
     if (data['code'] == 0) {
       var user = User.fromJson(data['data']);
-      // SharedPreferences.setMockInitialValues({});
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setString('user', json.encode(user.toJson()));
-      var str = prefs.getString("user");
-      print("储存$str");
       context.read<UserModel>().login(user);
       Navigator.pop(context);
     } else {

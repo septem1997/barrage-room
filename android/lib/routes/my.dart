@@ -26,26 +26,29 @@ class _MyRouteState extends State<MyRoute> {
                 child: Container(
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        child: Icon(
-                          Icons.account_circle,
-                          size: 64,
-                          color: Colors.black38,
+                  GestureDetector(
+                    child: Row(
+                      children: [
+                        Container(
+                          child: Icon(
+                            Icons.account_circle,
+                            size: 64,
+                            color: Colors.black38,
+                          ),
+                          margin: EdgeInsets.only(right: 10),
                         ),
-                        margin: EdgeInsets.only(right: 10),
-                      ),
-                      GestureDetector(
-                        child: Text(
+                        Expanded(
+                            child: Text(
                           isLogin ? user.nickname : "点击登录",
                           style: TextStyle(fontSize: 18),
-                        ),
-                        onTap: (){
-                          Navigator.pushNamed(context, "/login");
-                        },
-                      )
-                    ],
+                        ))
+                      ],
+                    ),
+                    onTap: () {
+                      if (!isLogin) {
+                        Navigator.pushNamed(context, "/login");
+                      }
+                    },
                   )
                 ],
               ),
@@ -55,7 +58,9 @@ class _MyRouteState extends State<MyRoute> {
               height: 36,
               child: isLogin
                   ? ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.read<UserModel>().logout();
+                      },
                       child: Text('退出登录'),
                     )
                   : null,

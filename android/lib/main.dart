@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:android/common/request.dart';
 import 'package:android/model/user.dart';
 import 'package:android/routes/home.dart';
 import 'package:android/routes/login.dart';
@@ -11,7 +12,7 @@ import 'dart:convert';
 
 
 Future<void> main() async {
-  // SharedPreferences.setMockInitialValues({});
+  WidgetsFlutterBinding.ensureInitialized();
   var prefs = await SharedPreferences.getInstance();
   print(prefs);
   var userStr = prefs.getString('user');
@@ -20,9 +21,10 @@ Future<void> main() async {
   if(userStr!=null && userStr.isNotEmpty){
     user = User.fromJson(json.decode(userStr));
   }
+  Request.init();
   runApp(
     ChangeNotifierProvider(
-      create: (context) => UserModel(user, false),
+      create: (context) => UserModel(user, user!=null),
       child: MyApp(),
     ),
   );

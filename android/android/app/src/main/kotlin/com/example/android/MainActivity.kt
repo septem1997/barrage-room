@@ -17,6 +17,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.StringCodec
+import io.flutter.plugins.GeneratedPluginRegistrant;
 
 
 class MainActivity: FlutterActivity() {
@@ -75,6 +76,7 @@ class MainActivity: FlutterActivity() {
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+        GeneratedPluginRegistrant.registerWith(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
             // Note: this method is invoked on the main thread.
                 call, result ->
