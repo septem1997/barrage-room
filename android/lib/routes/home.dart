@@ -10,13 +10,12 @@ class HomeRoute extends StatefulWidget {
 
 class _HomeRouteState extends State<HomeRoute> {
   var pageList = [RoomRoute(), HallRoute(), MyRoute()];
-  var currentIndex = 1;
+  var currentIndex = 0;
   PageController _pageController;
 
   @override
   void initState() {
-    this._pageController =
-        PageController(initialPage: this.currentIndex, keepPage: true);
+    _pageController = PageController(initialPage: currentIndex, keepPage: true);
     super.initState();
   }
 

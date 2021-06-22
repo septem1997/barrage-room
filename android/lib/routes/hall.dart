@@ -25,6 +25,7 @@ class _HallRouteState extends State<HallRoute>
   }
 
   Widget buildRoom(List<RoomTag> tags) {
+    // todo 房间图标缓存
     if (tags == null || tags.length == 0) {
       return Container();
     }
