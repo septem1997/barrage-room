@@ -11,14 +11,17 @@ class MyRoomList extends StatefulWidget {
 
 class _MyRoomListState extends State<MyRoomList>
     with AutomaticKeepAliveClientMixin {
+
   @override
   void initState() {
     super.initState();
     print("获取我创建的房间");
     Future.delayed(Duration.zero, () async {
-      var list = await Request(context).getMyRoom();
+      await Request(context).getMyRoom();
     });
   }
+
+  // todo 下拉刷新
 
   @override
   Widget build(BuildContext context) {

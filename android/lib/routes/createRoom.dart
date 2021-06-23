@@ -40,7 +40,6 @@ class _CreateRoomRouteState extends State<CreateRoomRoute> {
             hintText: "房间名",
             prefixIcon: Icon(Icons.home),
           ),
-          // 校验用户名（不能为空）
           validator: (v) {
             return v.trim().isNotEmpty ? null : "房间名不能为空";
           }),
@@ -49,7 +48,6 @@ class _CreateRoomRouteState extends State<CreateRoomRoute> {
         maxLength: 16,
         decoration: InputDecoration(
             labelText: "房间口令", hintText: "房间口令", prefixIcon: Icon(Icons.lock)),
-        //校验密码（不能为空）
         validator: (v) {
           return v.trim().isNotEmpty ? null : "房间口令不能为空";
         },

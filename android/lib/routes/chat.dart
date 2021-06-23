@@ -1,4 +1,5 @@
 
+import 'package:android/common/request.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,19 +38,6 @@ class WillPopScopeTestRouteState extends State<WillPopScopeTestRoute> {
 }
 
 class ChatRoute extends StatefulWidget {
-  ChatRoute({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
   @override
   _ChatRouteState createState() => _ChatRouteState();
 }
@@ -79,7 +67,7 @@ class _ChatRouteState extends State<ChatRoute> with WidgetsBindingObserver {
 
     final token = prefs.getString('token');
     socket = IO.io(
-        'http://192.168.0.102:8081/',
+        Request.baseUrl,
         OptionBuilder().setQuery({'token': token}).setTransports(
                 ['websocket']) // for Flutter or Dart VM
             .build());
@@ -176,7 +164,6 @@ class _ChatRouteState extends State<ChatRoute> with WidgetsBindingObserver {
         headers: {"token": token},
       ),
     );
-    print(response.data['result'].toString());
     setState(() {
       _barrageList.addAll(response.data['result'].map(
         (barrage) => barrage['userNickname']+"："+barrage['content']

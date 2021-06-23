@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:android/common/request.dart';
 import 'package:android/model/user.dart';
+import 'package:android/routes/chat.dart';
 import 'package:android/routes/createRoom.dart';
 import 'package:android/routes/home.dart';
 import 'package:android/routes/login.dart';
+import 'package:android/store/currentRoom.dart';
 import 'package:android/store/hallData.dart';
 import 'package:android/store/roomData.dart';
 import 'package:android/store/userModel.dart';
@@ -31,6 +33,7 @@ Future<void> main() async {
         ChangeNotifierProvider<UserModel>(create: (context) => UserModel(user, user != null)),
         ChangeNotifierProvider<HallData>(create: (context) => HallData([])),
         ChangeNotifierProvider<RoomData>(create: (context) => RoomData([],[])),
+        ChangeNotifierProvider<CurrentRoom>(create: (context) => CurrentRoom(null)),
       ],
       child: MyApp(),
     ),
@@ -59,6 +62,7 @@ class MyApp extends StatelessWidget {
         "/": (context) => HomeRoute(),
         "/login": (context) => LoginRoute(),
         "/createRoom": (context) => CreateRoomRoute(),
+        "/chatRoom": (context) => ChatRoute(),
       },
     );
   }

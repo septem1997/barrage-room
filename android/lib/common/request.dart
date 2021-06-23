@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:android/model/room.dart';
 import 'package:android/model/roomTag.dart';
 import 'package:android/model/user.dart';
+import 'package:android/store/currentRoom.dart';
 import 'package:android/store/hallData.dart';
 import 'package:android/store/roomData.dart';
 import 'package:dio/dio.dart';
@@ -46,6 +47,8 @@ class Request {
   Options _options;
   BuildContext context;
 
+  static var baseUrl = 'http://192.168.0.103:4000/';
+
   // 在网络请求过程中可能会需要使用当前的context信息，比如在请求失败时
   // 打开一个新路由，而打开新路由需要context信息。
   Request([this.context]) {
@@ -53,7 +56,7 @@ class Request {
   }
 
   static Dio dio = new Dio(BaseOptions(
-    baseUrl: 'http://192.168.0.103:4000/',
+    baseUrl: baseUrl,
     headers: {},
   ));
 
@@ -116,5 +119,32 @@ class Request {
       options: _options,
     );
     return r.data;
+  }
+
+
+  Future<Room> joinRoom(String roomNo,String password) async {
+    var r = await dio.post(
+      "/room/joinRoom",
+      data: {
+        'roomNo':roomNo,
+        'password':password
+      },
+      options: _options,
+    );
+    var data = Room.fromJson(r.data['data']);
+    context.read<CurrentRoom>().setCurrentRoom(data);
+    return data;
+  }
+
+  Future<List<Room>> getJoinRoom() async {
+    var r = await dio.get(
+      "/room/myJoinRoom",
+      options: _options,
+    );
+    List<Room> list = [];
+    var data = r.data['data'];
+    data.forEach((item) => list.add(Room.fromJson(item)));
+    context.read<RoomData>().setJoinRoom(list);
+    return list;
   }
 }
