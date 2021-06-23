@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
 import {BaseEntity} from "./baseEntity";
 import { RoomTag } from './roomTag';
+import { User } from './user';
 
 @Entity()
 export class Room extends BaseEntity{
@@ -14,16 +15,21 @@ export class Room extends BaseEntity{
     @Column({nullable:true})
     password:string;
 
-    @Column()
+    @Column({nullable:true})
     roomIcon:string;
 
-    @Column()
+    @Column({default:false})
     isPublic: boolean;
 
     @ManyToOne(() => RoomTag, (roomTag) => roomTag.rooms,{
         nullable:true
     })
     tag: RoomTag;
+
+    @ManyToOne(() => User, (user) => user.rooms,{
+        nullable:true
+    })
+    host: User;
 
     tagId:number;
 

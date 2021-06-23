@@ -57,7 +57,7 @@ class _LoginRouteState extends State<LoginRoute> {
   }
 
   void checkUserExist() {
-    Timer(Duration(seconds: 1), () async {
+    Timer(Duration(milliseconds: 500), () async {
       var usernameAvailable =
           await Request(context).usernameAvailable(_unameController.text);
       setState(() {
@@ -228,30 +228,35 @@ class _LoginRouteState extends State<LoginRoute> {
 
   void toRegister() {}
 
-  Future<void> saveUser(data) async {
-    if (data['code'] == 0) {
+  Future<void> handleData(Future future) async {
+    future.then((data) {
       var user = User.fromJson(data['data']);
       context.read<UserModel>().login(user);
-      Navigator.pop(context);
-    } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(data['message'])));
-    }
+      _btnController.success();
+      Timer(Duration(milliseconds: 500), () async {
+        Navigator.pop(context);
+      });
+    }).catchError((_){
+      _btnController.error();
+      Timer(Duration(seconds: 1), () async {
+        _btnController.reset();
+      });
+    });
   }
 
   Future<void> login() async {
     if ((_formKey.currentState as FormState).validate()) {
       var user = User(_unameController.text, null, null,_pwdController.text);
-      var response = await Request(context).login(user);
-      saveUser(response);
+      var future = Request(context).login(user);
+      handleData(future);
     }
   }
   
   Future<void> signup() async {
     if ((_formKey.currentState as FormState).validate()) {
       var user = User(_unameController.text, _nicknameController.text, null,_pwdController.text);
-      var response = await Request(context).signup(user);
-      saveUser(response);
+      var future = Request(context).signup(user);
+      handleData(future);
     }
   }
 }

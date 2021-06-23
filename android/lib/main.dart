@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:android/common/request.dart';
 import 'package:android/model/user.dart';
+import 'package:android/routes/createRoom.dart';
 import 'package:android/routes/home.dart';
 import 'package:android/routes/login.dart';
 import 'package:android/store/hallData.dart';
+import 'package:android/store/roomData.dart';
 import 'package:android/store/userModel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,8 +28,9 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        Provider<UserModel>(create: (_) => UserModel(user, user != null)),
-        Provider<HallData>(create: (_) => HallData([])),
+        ChangeNotifierProvider<UserModel>(create: (context) => UserModel(user, user != null)),
+        ChangeNotifierProvider<HallData>(create: (context) => HallData([])),
+        ChangeNotifierProvider<RoomData>(create: (context) => RoomData([],[])),
       ],
       child: MyApp(),
     ),
@@ -55,6 +58,7 @@ class MyApp extends StatelessWidget {
       routes: {
         "/": (context) => HomeRoute(),
         "/login": (context) => LoginRoute(),
+        "/createRoom": (context) => CreateRoomRoute(),
       },
     );
   }

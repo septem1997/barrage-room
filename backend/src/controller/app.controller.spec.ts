@@ -55,9 +55,9 @@ describe('AppController', () => {
       room.isPublic = true
       room.name = "欧洲杯"
       room.roomIcon = "https://barrage.oss-cn-guangzhou.aliyuncs.com/football.jpeg"
-      const roomTag1 = await roomController.editRoom(room);
-      console.log(roomTag1);
-      expect(roomTag1!=null).toBeTruthy();
+      // const roomTag1 = await roomController.editRoom(room);
+      // console.log(roomTag1);
+      // expect(roomTag1!=null).toBeTruthy();
     })
   });
 });

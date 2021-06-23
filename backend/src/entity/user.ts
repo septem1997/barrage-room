@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import {BaseEntity} from "./baseEntity";
+import { Room } from './room';
 
 @Entity()
 export class User extends BaseEntity{
@@ -15,4 +16,7 @@ export class User extends BaseEntity{
 
     @Column()
     password: string;
+
+    @OneToMany(() => Room, (room) => room.host)
+    rooms: Room[];
 }

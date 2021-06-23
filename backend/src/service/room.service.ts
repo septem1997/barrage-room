@@ -42,12 +42,39 @@ export class RoomService {
   }
 
 
-  async editRoom(room: Room) {
-    const tag = await this.roomTagRepository.findOne(room.tagId);
-    const number = await this.repository.count();
-    room.tag = tag;
-    const roomNoPre = room.isPublic?tag.id.toString().padStart(3,'0'):'000'
-    room.roomNo = roomNoPre+(number + 1).toString().padStart(6,'0')
-    return await this.repository.save(room);
+  async editRoom(request,room: Room) {
+    // todo roomDto
+    let saveRoom
+    if (room.id){
+      saveRoom = this.repository.findOne(room.id)
+    }else {
+      saveRoom = new Room()
+      const number = await this.repository.count();
+      const roomNoPre = room.tagId?room.tagId.toString().padStart(3,'0'):'000'
+      room.roomNo = roomNoPre+(number + 1).toString().padStart(6,'0')
+    }
+    if (request){
+      room.host = request.user;
+    }
+    if (room.tagId){
+      const tag = await this.roomTagRepository.findOne(room.tagId);
+      room.tag = tag;
+    }
+    saveRoom = Object.assign(saveRoom,room)
+
+    return await this.repository.save(saveRoom);
+  }
+
+  async findRoomListByUser(user) {
+    return await this.repository.createQueryBuilder('room')
+      .select([
+        'room.id',
+        'room.name',
+        'room.roomNo',
+        'room.password',
+        'room.createTime'
+      ])
+      .where("room.hostId = :id", { id: user.id })
+      .getMany();
   }
 }

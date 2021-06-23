@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:android/model/room.dart';
 import 'package:android/model/roomTag.dart';
 import 'package:android/model/user.dart';
 import 'package:android/store/hallData.dart';
+import 'package:android/store/roomData.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +22,12 @@ class AppInterceptors extends Interceptor {
     if (userStr != null) {
       var user = User.fromJson(json.decode(userStr));
       var token = user.token;
-      options.headers.addAll({"Authorization": "Bearer $token"});
+      options.headers.addAll({"Authorization": "$token"});
     }
+    print("调用接口:"+options.path);
+    print("data参数:"+json.encode(options.data));
+    print("query参数:"+options.queryParameters.toString());
+    print('header'+options.headers.toString());
     super.onRequest(options, handler);
   }
 
@@ -61,6 +67,7 @@ class Request {
   Future<bool> usernameAvailable(String username) async {
     var r = await dio.get(
       "/user/usernameAvailable?username=$username",
+      options: _options,
     );
     return r.data['data'];
   }
@@ -68,6 +75,7 @@ class Request {
   Future<List<RoomTag>> getHallData() async {
     var r = await dio.get(
       "/room/tags",
+      options: _options,
     );
     List<RoomTag> list = [];
     var data = r.data['data'];
@@ -75,9 +83,30 @@ class Request {
     return list;
   }
 
+  Future<List<Room>> getMyRoom() async {
+    var r = await dio.get(
+      "/room/myRoom",
+      options: _options,
+    );
+    List<Room> list = [];
+    var data = r.data['data'];
+    data.forEach((item) => list.add(Room.fromJson(item)));
+    context.read<RoomData>().setMyRoom(list);
+    return list;
+  }
+
   Future<Map<String, dynamic>> signup(User user) async {
     var r = await dio.post("user/signup", data: user, options: _options);
     return r.data;
+  }
+
+
+  Future<void> createRoom(Room room) async {
+    var r = await dio.post(
+      "room/editRoom",
+      data: room,
+      options: _options,
+    );
   }
 
   Future<Map<String, dynamic>> login(User user) async {

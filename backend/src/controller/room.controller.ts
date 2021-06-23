@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { RoomService } from '../service/room.service';
 import { UserDto } from '../dto/user.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -15,6 +15,14 @@ export class RoomController {
     return await this.roomService.findAllTags();
   }
 
+  @Get('myRoom')
+  @UseGuards(AuthGuard('userJwt'))
+  async myRoom(
+    @Req() request
+  ):Promise<Room[]> {
+    return await this.roomService.findRoomListByUser(request.user);
+  }
+
   @Post('editTag')
   async editTag(
     @Body() roomTag: RoomTag
@@ -23,9 +31,10 @@ export class RoomController {
   }
 
   @Post('editRoom')
+  @UseGuards(AuthGuard('userJwt'))
   async editRoom(
-    @Body() room: Room
+    @Body() room: Room,@Req() request
   ) {
-    return await this.roomService.editRoom(room);
+    return await this.roomService.editRoom(request,room);
   }
 }
