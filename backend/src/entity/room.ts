@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
 import {BaseEntity} from "./baseEntity";
 import { RoomTag } from './roomTag';
 import { User } from './user';
@@ -30,6 +30,10 @@ export class Room extends BaseEntity{
         nullable:true
     })
     host: User;
+
+    @ManyToMany(() => User, user => user.joinRooms)
+    @JoinTable()
+    members: User[];
 
     tagId:number;
 

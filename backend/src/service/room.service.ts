@@ -16,13 +16,12 @@ export class RoomService {
     private repository: Repository<Room>,
     @InjectRepository(RoomTag)
     private roomTagRepository: Repository<RoomTag>,
-  ) {}
-
-
+  ) {
+  }
 
 
   async editTag(roomTag: RoomTag) {
-    return await this.roomTagRepository.save(roomTag)
+    return await this.roomTagRepository.save(roomTag);
   }
 
   async findAllTags(): Promise<RoomTag[]> {
@@ -32,7 +31,7 @@ export class RoomService {
         'roomTag.name',
         'room.id',
         'room.name',
-        'room.roomIcon'
+        'room.roomIcon',
       ])
       .leftJoin('roomTag.rooms', 'room')
       .getMany();
@@ -42,25 +41,25 @@ export class RoomService {
   }
 
 
-  async editRoom(request,room: Room) {
+  async editRoom(request, room: Room) {
     // todo roomDto
-    let saveRoom
-    if (room.id){
-      saveRoom = this.repository.findOne(room.id)
-    }else {
-      saveRoom = new Room()
+    let saveRoom;
+    if (room.id) {
+      saveRoom = this.repository.findOne(room.id);
+    } else {
+      saveRoom = new Room();
       const number = await this.repository.count();
-      const roomNoPre = room.tagId?room.tagId.toString().padStart(3,'0'):'000'
-      room.roomNo = roomNoPre+(number + 1).toString().padStart(6,'0')
+      const roomNoPre = room.tagId ? room.tagId.toString().padStart(3, '0') : '000';
+      room.roomNo = roomNoPre + (number + 1).toString().padStart(6, '0');
     }
-    if (request){
+    if (request) {
       room.host = request.user;
     }
-    if (room.tagId){
+    if (room.tagId) {
       const tag = await this.roomTagRepository.findOne(room.tagId);
       room.tag = tag;
     }
-    saveRoom = Object.assign(saveRoom,room)
+    saveRoom = Object.assign(saveRoom, room);
 
     return await this.repository.save(saveRoom);
   }
@@ -72,9 +71,46 @@ export class RoomService {
         'room.name',
         'room.roomNo',
         'room.password',
-        'room.createTime'
+        'room.createTime',
       ])
-      .where("room.hostId = :id", { id: user.id })
+      .where('room.hostId = :id', { id: user.id })
+      .getMany();
+  }
+
+  async joinRoom(request, room: Room) {
+    const foundRoom = await this.repository.findOne({
+      relations:['members','host'],
+      where: { roomNo: room.roomNo },
+    });
+    if (foundRoom == null) {
+      throw new HttpException('该房间不存在，请确认编号是否正确', HttpStatus.NOT_FOUND);
+    }
+    if (foundRoom.password !== room.password) {
+      throw new HttpException('房间编号与口令不匹配', HttpStatus.BAD_REQUEST);
+    }
+    if (!foundRoom.members) {
+      foundRoom.members = [];
+    }
+    if (!foundRoom.members.map(user => user.id).includes(foundRoom.host.id)) {
+      foundRoom.members.push(request.user);
+      await this.repository.save(foundRoom);
+    }
+    foundRoom.members = null
+    foundRoom.host = null
+    return foundRoom;
+  }
+
+  async findJoinRoomListByUser(user) {
+    return await this.repository.createQueryBuilder('room')
+      .select([
+        'room.id',
+        'room.name',
+        'room.roomNo',
+        'room.password',
+        'room.createTime',
+      ])
+      .leftJoinAndSelect('room.members', 'member')
+      .where('member.id = :id', { id: user.id })
       .getMany();
   }
 }

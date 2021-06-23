@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany } from 'typeorm';
 import {BaseEntity} from "./baseEntity";
 import { Room } from './room';
 
@@ -19,4 +19,7 @@ export class User extends BaseEntity{
 
     @OneToMany(() => Room, (room) => room.host)
     rooms: Room[];
+
+    @ManyToMany(() => Room, (room) => room.members)
+    joinRooms: Room[];
 }

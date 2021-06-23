@@ -14,7 +14,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const request = ctx.getRequest();
 
     const message = exception.message;
-    Logger.log('错误提示', message);
+    Logger.error(exception.stack)
     const errorResponse = {
       message: message,
       code: 1, // 自定义code

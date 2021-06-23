@@ -23,6 +23,14 @@ export class RoomController {
     return await this.roomService.findRoomListByUser(request.user);
   }
 
+  @Get('myJoinRoom')
+  @UseGuards(AuthGuard('userJwt'))
+  async myJoinRoom(
+    @Req() request
+  ):Promise<Room[]> {
+    return await this.roomService.findJoinRoomListByUser(request.user);
+  }
+
   @Post('editTag')
   async editTag(
     @Body() roomTag: RoomTag
@@ -36,5 +44,14 @@ export class RoomController {
     @Body() room: Room,@Req() request
   ) {
     return await this.roomService.editRoom(request,room);
+  }
+
+
+  @Post('joinRoom')
+  @UseGuards(AuthGuard('userJwt'))
+  async joinRoom(
+    @Body() room: Room,@Req() request
+  ) {
+    return await this.roomService.joinRoom(request,room);
   }
 }

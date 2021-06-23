@@ -11,6 +11,8 @@ import { AppGateway } from '../app.gateway';
 import { RoomModule } from './room.module';
 import { RoomTag } from '../entity/roomTag';
 import { Room } from '../entity/room';
+import { BarrageModule } from './barrage.module';
+import { Barrage } from '../entity/barrage';
 
 @Module({
   imports: [
@@ -24,12 +26,13 @@ import { Room } from '../entity/room';
       username: 'root',
       password: 'root',
       database: 'barrage_room',
-      entities: [Admin,User,RoomTag,Room],
+      entities: [Admin,User,RoomTag,Room,Barrage],
       synchronize: true,
     }),
     UserModule,
     AdminModule,
-    RoomModule
+    RoomModule,
+    BarrageModule
   ],
   controllers: [AppController],
   providers: [AppService,AppGateway],
