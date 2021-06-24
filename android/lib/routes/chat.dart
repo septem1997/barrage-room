@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
+import 'package:intl/intl.dart';
 
 class ChatRoute extends StatefulWidget {
   @override
@@ -27,6 +28,7 @@ class _ChatRouteState extends State<ChatRoute> with WidgetsBindingObserver {
   var msgList = ["消息1", "消息2", "消息3"];
   String _tips = '请启用悬浮窗权限以正常使用功能';
   IO.Socket socket;
+  var _listController = ScrollController(keepScrollOffset: true,initialScrollOffset: 0);
 
   var _barrageList = <Barrage>[];
 
@@ -57,8 +59,9 @@ class _ChatRouteState extends State<ChatRoute> with WidgetsBindingObserver {
       print('socket:receiveMsg ----- ' + data.toString());
       var barrage = Barrage.fromJson(data);
       setState(() {
-        _barrageList.add(barrage);
+        _barrageList.insert(0,barrage);
       });
+      _listController.animateTo(0, duration: Duration(milliseconds: 500), curve: Curves.bounceIn);
       platform.invokeMethod("receiveMsg", barrage.content);
     });
     socket.onDisconnect((_) => print('disconnect'));
@@ -88,7 +91,7 @@ class _ChatRouteState extends State<ChatRoute> with WidgetsBindingObserver {
       }
       WidgetsBinding.instance.addObserver(this);
       _checkPermission();
-      // _getBarrageList();
+      await _getBarrageList(room.id.toString());
       await initSocket(room);
       Fluttertoast.showToast(
           gravity: ToastGravity.CENTER,
@@ -134,27 +137,35 @@ class _ChatRouteState extends State<ChatRoute> with WidgetsBindingObserver {
 
     return Container(
       child: ListView.separated(
+        controller: _listController,
         itemCount: _barrageList.length,
+        reverse: true,
         itemBuilder: (context, index) {
           var barrage = _barrageList[index];
           return Padding(
               padding: EdgeInsets.all(12),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: 42,
-                    height: 42,
+                    padding: EdgeInsets.only(right: 12),
                     child: Icon(
                       Icons.account_circle_outlined,
-                      size: 28,
+                      color:Color(0xff1976D2),
+                      size: 42,
                     ),
                   ),
                   Expanded(
                       child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(barrage.sender+"："),
-                      Text(barrage.content)
+                      Text(barrage.sender+"：",style: TextStyle(color: Color(0xff448AFF)),),
+                      Text(barrage.content),
+                      Container(
+                        width: double.maxFinite,
+                        padding: EdgeInsets.only(top: 8),
+                        child: Text(barrage.createTime,textAlign:TextAlign.right,style: TextStyle(color: Colors.black54),),
+                      )
                     ],
                   )),
                 ],
@@ -188,19 +199,10 @@ class _ChatRouteState extends State<ChatRoute> with WidgetsBindingObserver {
         ));
   }
 
-  Future<void> _getBarrageList() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-    var response = await Dio().get(
-      "http://192.168.0.102:8080/barrage/list",
-      options: Options(
-        headers: {"token": token},
-      ),
-    );
+  Future<void> _getBarrageList(String roomId) async {
+    var list = await Request(context).getBarrageList(roomId);
     setState(() {
-      _barrageList.addAll(response.data['result']
-          .map((barrage) => barrage['userNickname'] + "：" + barrage['content'])
-          .toList());
+      _barrageList.addAll(list);
     });
   }
 }

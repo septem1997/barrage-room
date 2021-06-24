@@ -1,5 +1,8 @@
 import 'package:android/common/request.dart';
+import 'package:android/store/roomData.dart';
+import 'package:android/widgets/roomList.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class JoinRoomList extends StatefulWidget {
   @override
@@ -60,6 +63,7 @@ class _JoinRoomListState extends State<JoinRoomList>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    var list = Provider.of<RoomData>(context).joinRoom;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -102,13 +106,18 @@ class _JoinRoomListState extends State<JoinRoomList>
       body: Container(
           width: double.infinity,
           height: double.infinity,
-          child: Center(
-            child: Text(
-              '点击右下角按钮加入房间',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.black45),
-            ),
-          )),
+          child: list.isEmpty
+              ? Container(
+              width: double.infinity,
+              height: double.infinity,
+              child: Center(
+                child: Text(
+                  '点击右下角按钮加入房间',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.black45),
+                ),
+              ))
+              : RoomList(roomList: list)),
     );
   }
 

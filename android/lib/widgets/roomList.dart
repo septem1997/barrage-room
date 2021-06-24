@@ -8,9 +8,18 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class RoomList extends StatelessWidget {
-  const RoomList({Key key, this.roomList}) : super(key: key);
+  RoomList({Key key, this.roomList}) : super(key: key);
 
   final List<Room> roomList;
+
+  final List<Color> _colors = [
+    Color(0xffb74093),
+    Color(0xff1976D2),
+    Color(0xffCDDC39),
+    Color(0xffC2185B),
+    Color(0xff2196F3),
+    Color(0xff689F38)
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +44,7 @@ class RoomList extends StatelessWidget {
                     height: 42,
                     child: Icon(
                       Icons.home_outlined,
+                      color: _colors[index%_colors.length],
                       size: 28,
                     ),
                   ),

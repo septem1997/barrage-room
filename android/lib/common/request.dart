@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:android/model/barrage.dart';
 import 'package:android/model/room.dart';
 import 'package:android/model/roomTag.dart';
 import 'package:android/model/user.dart';
@@ -25,10 +26,10 @@ class AppInterceptors extends Interceptor {
       var token = user.token;
       options.headers.addAll({"Authorization": "$token"});
     }
-    print("调用接口:"+options.path);
-    print("data参数:"+json.encode(options.data));
-    print("query参数:"+options.queryParameters.toString());
-    print('header'+options.headers.toString());
+    print("调用接口:" + options.path);
+    print("data参数:" + json.encode(options.data));
+    print("query参数:" + options.queryParameters.toString());
+    print('header' + options.headers.toString());
     super.onRequest(options, handler);
   }
 
@@ -82,6 +83,17 @@ class Request {
     return list;
   }
 
+  Future<List<Barrage>> getBarrageList(String roomId) async {
+    var r = await dio.get(
+      "/barrage/list?roomId=$roomId",
+      options: _options,
+    );
+    List<Barrage> list = [];
+    var data = r.data['data'];
+    data.forEach((item) => list.add(Barrage.fromJson(item)));
+    return list;
+  }
+
   Future<List<Room>> getMyRoom() async {
     var r = await dio.get(
       "/room/myRoom",
@@ -98,7 +110,6 @@ class Request {
     var r = await dio.post("user/signup", data: user, options: _options);
     return r.data;
   }
-
 
   Future<void> createRoom(Room room) async {
     var r = await dio.post(
@@ -117,14 +128,10 @@ class Request {
     return r.data;
   }
 
-
-  Future<Room> joinRoom(String roomNo,String password) async {
+  Future<Room> joinRoom(String roomNo, String password) async {
     var r = await dio.post(
       "/room/joinRoom",
-      data: {
-        'roomNo':roomNo,
-        'password':password
-      },
+      data: {'roomNo': roomNo, 'password': password},
       options: _options,
     );
     var data = Room.fromJson(r.data['data']);

@@ -112,8 +112,8 @@ class BarrageLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         danmaku.isLive = true
         danmaku.time = mDanmakuView.currentTime
         danmaku.textSize = 25f * (mParser.displayer.density - 0.6f)
-        danmaku.textColor = Color.RED
-        danmaku.textShadowColor = Color.WHITE
+        danmaku.textColor = Color.WHITE
+        danmaku.textShadowColor = Color.BLACK
         // danmaku.underlineColor = Color.GREEN;
 //        danmaku.borderColor = Color.GREEN
         mDanmakuView.addDanmaku(danmaku)
