@@ -8,6 +8,7 @@ import { AdminDto } from '../dto/admin.dto';
 import { Room } from '../entity/room';
 import { RoomTag } from '../entity/roomTag';
 import { Barrage } from '../entity/barrage';
+import { BarrageDto } from '../dto/barrage.dto';
 
 @Injectable()
 export class BarrageService {
@@ -16,6 +17,16 @@ export class BarrageService {
     @InjectRepository(Barrage)
     private repository: Repository<Barrage>
   ) {
+  }
+
+  createBarrage(barrageDto:BarrageDto){
+    const barrage = new Barrage();
+    const room = new Room();
+    room.id = barrageDto.roomId
+    barrage.room = room
+    barrage.creator = barrageDto.creator.id?barrageDto.creator:null
+    barrage.content = barrageDto.content
+    this.repository.save(barrage)
   }
 
   async findBarrageByRoom(roomId): Promise<Barrage[]> {

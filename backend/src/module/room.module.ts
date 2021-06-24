@@ -4,14 +4,14 @@ import { Room } from '../entity/room';
 import { RoomService } from '../service/room.service';
 import { RoomTag } from '../entity/roomTag';
 import { RoomController } from '../controller/room.controller';
-
+const reps = [TypeOrmModule.forFeature([Room]),TypeOrmModule.forFeature([RoomTag])];
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Room]),
-    TypeOrmModule.forFeature([RoomTag])
-  ],
+  imports: reps,
   controllers:[RoomController],
-  providers:[RoomService]
+  providers:[RoomService],
+  exports:[
+    ...reps,RoomService
+  ]
 })
 export class RoomModule {
 }

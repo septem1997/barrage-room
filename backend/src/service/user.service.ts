@@ -20,12 +20,24 @@ export class UserService {
     return bcrypt.hash(pass, saltRounds);
   }
 
+  async findUserByToken(token: string):Promise<User> {
+    if (!token||token==='null') {
+      return new Promise((resolve)=>{
+        resolve(null)
+      })
+    }
+    const userDto = new UserDto();
+    userDto.username = (<any>this.jwtService.decode(token.substr(7))).username;
+    return await this.findOne(userDto);
+  }
+
 
   async login(userDto:UserDto) {
     const findUser = await this.findOne(userDto)
     if (findUser){
       const pwdIsCorrect = await bcrypt.compare(userDto.password, findUser.password)
       if (pwdIsCorrect){
+        userDto.password = null
         return {
           token:'Bearer '+this.jwtService.sign(userDto),
           username:findUser.username,
@@ -54,6 +66,7 @@ export class UserService {
     user.nickname = userDto.nickname
     user.avatar = ""
     await this.repository.save(user)
+    userDto.password = null
     return {
       token:'Bearer '+this.jwtService.sign(userDto),
       username:user.username,

@@ -35,6 +35,9 @@ import { Barrage } from '../entity/barrage';
     BarrageModule
   ],
   controllers: [AppController],
-  providers: [AppService,AppGateway],
+  providers: [
+    AppService,
+    AppGateway
+  ],
 })
 export class AppModule {}

@@ -7,17 +7,19 @@ import { UserJwtStrategy } from '../config/user.jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { jwtConstants } from '../config/constants';
-
+const jwtService = JwtModule.register({
+  secret: jwtConstants.secretForUser,
+  signOptions: { expiresIn: '7d' },
+});
+const userRepository = TypeOrmModule.forFeature([User]);
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    userRepository,
     PassportModule,
-    JwtModule.register({
-      secret: jwtConstants.secretForUser,
-      signOptions: { expiresIn: '7d' },
-    })],
+    jwtService],
   controllers: [UserController],
   providers: [UserService, UserJwtStrategy],
+  exports:[UserService,userRepository,UserJwtStrategy,jwtService]
 })
 export class UserModule {
 }
