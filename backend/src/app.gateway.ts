@@ -13,6 +13,7 @@ import { User } from './entity/user';
 import { RoomService } from './service/room.service';
 import { BarrageService } from './service/barrage.service';
 import { BarrageDto } from './dto/barrage.dto';
+import * as moment from 'moment';
 
 @WebSocketGateway()
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -39,6 +40,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     barrageDto.creator = user
     barrageDto.roomId = roomId
     barrageDto.sender = user.nickname
+    barrageDto.createTime = moment().format('YYYY-MM-DD HH:mm:ss')
     // barrageDto.content = payload.content
     Array.from(this.roomMap.get(roomId)).forEach(client =>{
       client.emit('receiveMsg', barrageDto);

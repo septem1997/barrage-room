@@ -20,6 +20,9 @@ export class BarrageService {
   }
 
   createBarrage(barrageDto:BarrageDto){
+    if (barrageDto.content.length > 200){
+      barrageDto.content = barrageDto.content.substr(0,200);
+    }
     const barrage = new Barrage();
     const room = new Room();
     room.id = barrageDto.roomId
@@ -30,7 +33,7 @@ export class BarrageService {
   }
 
   async findBarrageByRoom(roomId): Promise<Barrage[]> {
-    return await this.repository.createQueryBuilder('barrage')
+    const list =  await this.repository.createQueryBuilder('barrage')
       .select([
         'barrage.id',
         'barrage.content',
@@ -40,7 +43,14 @@ export class BarrageService {
       .leftJoin('barrage.creator', 'creator')
       .leftJoin('barrage.room', 'room')
       .where('room.id = :id', { id: roomId })
+      .take(10)
+      .orderBy("barrage.id","DESC")
       .getMany();
+    list.forEach((barrage)=>{
+      barrage.sender = barrage.creator?barrage.creator.nickname:'匿名游客'
+      console.log(barrage.createTime)
+    })
+    return list
   }
 
 }

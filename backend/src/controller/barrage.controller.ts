@@ -9,7 +9,7 @@ export class BarrageController {
 
   @Get('list')
   async getBarrages(
-    @Query("username") roomId: number
+    @Query("roomId") roomId: number
   ):Promise<Barrage[]> {
     return await this.barrageService.findBarrageByRoom(roomId);
   }

@@ -15,6 +15,8 @@ export class Barrage extends BaseEntity{
     })
     creator: User;
 
+    sender:string;
+
     @ManyToOne(() => Room)
     room: Room;
 }

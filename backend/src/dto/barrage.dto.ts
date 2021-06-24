@@ -6,4 +6,5 @@ export class BarrageDto {
   roomId: number;
   userId:number;
   creator:User;
+  createTime:string;
 }

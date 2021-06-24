@@ -1,6 +1,5 @@
 import { Column, CreateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
-
-const moment = require('moment');
+import * as moment from 'moment';
 
 export class BaseEntity{
     @PrimaryGeneratedColumn()
@@ -19,7 +18,13 @@ export class BaseEntity{
     //     }})
     // createTime:string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({transformer:{
+      from(value: Date): any {
+        return moment(value).format('YYYY-MM-DD HH:mm:ss')
+      },
+      to(value: any): any {
+        return value
+      }}})
   createTime: Date;
 
 }
