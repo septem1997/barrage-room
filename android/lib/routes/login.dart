@@ -246,6 +246,7 @@ class _LoginRouteState extends State<LoginRoute> {
 
   Future<void> login() async {
     if ((_formKey.currentState as FormState).validate()) {
+      _btnController.start();
       var user = User(_unameController.text, null, null,_pwdController.text);
       var future = Request(context).login(user);
       handleData(future);
@@ -254,6 +255,7 @@ class _LoginRouteState extends State<LoginRoute> {
   
   Future<void> signup() async {
     if ((_formKey.currentState as FormState).validate()) {
+      _btnController.start();
       var user = User(_unameController.text, _nicknameController.text, null,_pwdController.text);
       var future = Request(context).signup(user);
       handleData(future);

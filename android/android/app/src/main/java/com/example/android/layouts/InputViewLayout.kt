@@ -8,6 +8,7 @@ import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -25,6 +26,15 @@ class InputViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
     constructor(context: Context) : this(context, null) {}
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0) {}
 
+
+    // todo 没有监听到
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        Log.d("info","输入了键"+keyCode)
+        if (keyCode== KeyEvent.KEYCODE_BACK) {//返回键
+            remove()
+        }
+        return super.onKeyDown(keyCode, event)
+    }
 
     override fun show() {
         super.show()
@@ -55,7 +65,7 @@ class InputViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
         addView(linearLayout,linearLayoutParams)
 
         edit = EditText(context)
-        edit.hint = "请输入弹幕内容"
+        edit.hint = "输入弹幕,点击上方空白处返回"
         edit.setHintTextColor(Color.WHITE)
         edit.setTextColor(Color.WHITE)
         edit.isFocusable = true

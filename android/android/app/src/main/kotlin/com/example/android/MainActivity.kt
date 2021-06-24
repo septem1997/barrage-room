@@ -84,6 +84,9 @@ class MainActivity: FlutterActivity() {
                 "checkPermission" -> {
                     result.success(checkPermission())
                 }
+                "unbindService" -> {
+                    result.success(unbindService(connection))
+                }
                 "turnOnPermission" -> {
                     result.success(turnOnPermission())
                 }

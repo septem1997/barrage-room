@@ -1,5 +1,6 @@
 import 'package:android/common/request.dart';
 import 'package:android/model/roomTag.dart';
+import 'package:android/store/currentRoom.dart';
 import 'package:android/store/hallData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -44,7 +45,10 @@ class _HallRouteState extends State<HallRoute>
                   itemCount: currentRooms.length,
                   itemBuilder: (context, index) {
                     return InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        context.read<CurrentRoom>().setCurrentRoom(currentRooms[index]);
+                        Navigator.of(context).pushNamed('/chatRoom');
+                      },
                       child: Container(
                         padding: EdgeInsets.all(12),
                         child: Column(

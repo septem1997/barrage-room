@@ -1,41 +1,19 @@
+import 'dart:convert';
 
 import 'package:android/common/request.dart';
+import 'package:android/model/barrage.dart';
+import 'package:android/model/room.dart';
+import 'package:android/store/currentRoom.dart';
+import 'package:android/store/userModel.dart';
+import 'package:android/widgets/willPopContainer.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
-
-class WillPopScopeTestRoute extends StatefulWidget {
-  @override
-  WillPopScopeTestRouteState createState() {
-    return new WillPopScopeTestRouteState();
-  }
-}
-
-class WillPopScopeTestRouteState extends State<WillPopScopeTestRoute> {
-  DateTime _lastPressedAt; //上次点击时间
-
-  @override
-  Widget build(BuildContext context) {
-    return new WillPopScope(
-        onWillPop: () async {
-          if (_lastPressedAt == null ||
-              DateTime.now().difference(_lastPressedAt) >
-                  Duration(seconds: 1)) {
-            //两次点击间隔超过1秒则重新计时
-            _lastPressedAt = DateTime.now();
-            return false;
-          }
-          return true;
-        },
-        child: Container(
-          alignment: Alignment.center,
-          child: Text("1秒内连续按两次返回键退出"),
-        ));
-  }
-}
 
 class ChatRoute extends StatefulWidget {
   @override
@@ -50,7 +28,7 @@ class _ChatRouteState extends State<ChatRoute> with WidgetsBindingObserver {
   String _tips = '请启用悬浮窗权限以正常使用功能';
   IO.Socket socket;
 
-  var _barrageList = <String>[];
+  var _barrageList = <Barrage>[];
 
   Future<void> _checkPermission() async {
     bool hasPermission = await platform.invokeMethod('checkPermission');
@@ -62,19 +40,27 @@ class _ChatRouteState extends State<ChatRoute> with WidgetsBindingObserver {
     });
   }
 
-  initSocket() async {
-    final prefs = await SharedPreferences.getInstance();
+  initSocket(Room room) async {
+    var user = Provider.of<UserModel>(context, listen: false).user;
 
-    final token = prefs.getString('token');
+    // todo 改成全局变量
     socket = IO.io(
         Request.baseUrl,
-        OptionBuilder().setQuery({'token': token}).setTransports(
-                ['websocket']) // for Flutter or Dart VM
-            .build());
+        OptionBuilder().setQuery({
+          'roomId':room.id,
+          'token': user == null ? '' : user.token
+        }).setTransports(['websocket']).build());
     socket.onConnect((_) {
       print('connect');
     });
-    socket.on("receiveMsg", (data) => {_onReceiveMsg(data)});
+    socket.on("receiveMsg", (data) {
+      print('socket:receiveMsg ----- ' + data.toString());
+      var barrage = Barrage.fromJson(data);
+      setState(() {
+        _barrageList.add(barrage);
+      });
+      platform.invokeMethod("receiveMsg", barrage.content);
+    });
     socket.onDisconnect((_) => print('disconnect'));
 
     BasicMessageChannel<String> _basicMessageChannel =
@@ -90,32 +76,36 @@ class _ChatRouteState extends State<ChatRoute> with WidgetsBindingObserver {
             }));
   }
 
-  _onReceiveMsg(data) {
-    print('socket:receiveMsg' + data.toString());
-    setState(() {
-      _barrageList.add(data['userNickname']+"："+data['content']);
-    });
-    platform.invokeMethod("receiveMsg", data['content']);
-  }
-
-  _turnOnPermission() {
-    platform.invokeMethod('turnOnPermission');
-  }
-
   @override
   initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _checkPermission();
-    _getBarrageList();
-    initSocket();
+    print('初始化房间');
+    Future.delayed(Duration.zero, () async {
+      var room = Provider.of<CurrentRoom>(context,listen: false).currentRoom;
+      if(room==null){
+        Navigator.pop(context);
+        return;
+      }
+      WidgetsBinding.instance.addObserver(this);
+      _checkPermission();
+      // _getBarrageList();
+      await initSocket(room);
+      Fluttertoast.showToast(
+          gravity: ToastGravity.CENTER,
+          msg: "进入房间成功，现在可以切到其他应用一边聊天了",
+          toastLength: Toast.LENGTH_LONG);
+    });
   }
 
   @override
   void dispose() {
-    super.dispose();
+    if (socket != null && socket.connected) {
+      socket.disconnect();
+    }
+    print('销毁房间');
+    platform.invokeMethod("unbindService");
     WidgetsBinding.instance.removeObserver(this);
-    socket.disconnect();
+    super.dispose();
   }
 
   @override
@@ -126,33 +116,76 @@ class _ChatRouteState extends State<ChatRoute> with WidgetsBindingObserver {
     }
   }
 
-  Widget build(BuildContext context) {
-    var checkPermissionTips = Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ElevatedButton(
-          child: Text('启用悬浮窗权限'),
-          onPressed: _turnOnPermission,
-        ),
-        Text(_tips)
-      ],
-    );
+  Widget buildPage(Room room) {
+    if (!_hasPermission) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton(
+            child: Text('启用悬浮窗权限'),
+            onPressed: () {
+              platform.invokeMethod('turnOnPermission');
+            },
+          ),
+          Text(_tips)
+        ],
+      );
+    }
 
-    var chatDialog = Container(
+    return Container(
       child: ListView.separated(
         itemCount: _barrageList.length,
         itemBuilder: (context, index) {
-          return ListTile(title: Text(_barrageList[index]));
+          var barrage = _barrageList[index];
+          return Padding(
+              padding: EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    child: Icon(
+                      Icons.account_circle_outlined,
+                      size: 28,
+                    ),
+                  ),
+                  Expanded(
+                      child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(barrage.sender+"："),
+                      Text(barrage.content)
+                    ],
+                  )),
+                ],
+              ));
         },
         separatorBuilder: (context, index) => Divider(height: .0),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var room = Provider.of<CurrentRoom>(context).currentRoom;
+    if (room == null) {
+      return Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: Center(
+            child: Text(
+              '无房间信息，请返回重新进入',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black45),
+            ),
+          ));
+    }
 
     return Scaffold(
-        appBar: AppBar(title: Text("共享弹幕")),
-        body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _hasPermission ? chatDialog : checkPermissionTips));
+        appBar: AppBar(title: Text(room.name)),
+        body: WillPopContainer(
+          child: buildPage(room),
+        ));
   }
 
   Future<void> _getBarrageList() async {
@@ -165,9 +198,9 @@ class _ChatRouteState extends State<ChatRoute> with WidgetsBindingObserver {
       ),
     );
     setState(() {
-      _barrageList.addAll(response.data['result'].map(
-        (barrage) => barrage['userNickname']+"："+barrage['content']
-      ).toList());
+      _barrageList.addAll(response.data['result']
+          .map((barrage) => barrage['userNickname'] + "：" + barrage['content'])
+          .toList());
     });
   }
 }

@@ -1,8 +1,11 @@
 import 'package:android/model/room.dart';
+import 'package:android/routes/home.dart';
+import 'package:android/store/currentRoom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 class RoomList extends StatelessWidget {
   const RoomList({Key key, this.roomList}) : super(key: key);
@@ -19,7 +22,10 @@ class RoomList extends StatelessWidget {
           var roomNo = room.roomNo;
           var roomPwd = room.password;
           return InkWell(
-            onTap: () {},
+            onTap: () {
+              context.read<CurrentRoom>().setCurrentRoom(room);
+              Navigator.of(context).pushNamed('/chatRoom');
+            },
             child: Container(
               padding: EdgeInsets.all(12),
               child: Row(

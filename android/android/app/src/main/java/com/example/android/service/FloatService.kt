@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import com.example.android.binder.FloatBinder
 import com.example.android.layouts.BarrageFloatButton
 import com.example.android.layouts.BarrageLayout
@@ -50,6 +51,15 @@ class FloatService : Service() {
             inputLayout.edit.text.clear()
             inputLayout.remove()
         }
+    }
+
+    override fun onDestroy() {
+        Log.d("info","销毁服务")
+        setOnSendMsgListener(null)
+        floatButton.remove()
+//        inputLayout.remove()
+        barrageLayout.remove()
+        super.onDestroy()
     }
 
     fun onReceiveMsg(text:String){

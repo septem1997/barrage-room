@@ -85,6 +85,7 @@ class _JoinRoomListState extends State<JoinRoomList>
                             .joinRoom(
                                 _roomNoController.text, _pwdController.text)
                             .then((value) {
+                          Navigator.of(context).pop();
                           Navigator.of(context).pushNamed('/chatRoom');
                         });
                       }
