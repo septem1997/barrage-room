@@ -2,6 +2,7 @@ import 'package:android/common/request.dart';
 import 'package:android/store/roomData.dart';
 import 'package:android/widgets/roomList.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class JoinRoomList extends StatefulWidget {
@@ -67,6 +68,18 @@ class _JoinRoomListState extends State<JoinRoomList>
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          Clipboard.getData('text/plain').then((content) {
+            var text = content.text;
+            print('获得剪切板数据：$text');
+            if(text.startsWith("快来共享弹幕加入我的房间吧")){
+              RegExp noReg = new RegExp(r"编号：(\d{9})");
+              RegExp pwdReg = new RegExp(r"口令：(\w+)$");
+              print(noReg.allMatches(text).elementAt(0).group(1));
+              print(pwdReg.allMatches(text).elementAt(0).group(1));
+              _roomNoController.text = noReg.allMatches(text).elementAt(0).group(1);
+              _pwdController.text = pwdReg.allMatches(text).elementAt(0).group(1);
+            }
+          });
           showDialog(
             context: context,
             barrierDismissible: false,

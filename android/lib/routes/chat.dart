@@ -121,22 +121,27 @@ class _ChatRouteState extends State<ChatRoute> with WidgetsBindingObserver {
 
   Widget buildPage(Room room) {
     if (!_hasPermission) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          ElevatedButton(
-            child: Text('启用悬浮窗权限'),
-            onPressed: () {
-              platform.invokeMethod('turnOnPermission');
-            },
-          ),
-          Text(_tips)
-        ],
+      return Container(
+        width: double.maxFinite,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              child: Text('启用悬浮窗权限'),
+              onPressed: () {
+                platform.invokeMethod('turnOnPermission');
+              },
+            ),
+            Text(_tips)
+          ],
+        ),
       );
     }
 
     return Container(
       child: ListView.separated(
+        shrinkWrap: true,
         controller: _listController,
         itemCount: _barrageList.length,
         reverse: true,
