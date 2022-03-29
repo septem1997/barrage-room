@@ -80,7 +80,7 @@ class _CreateRoomRouteState extends State<CreateRoomRoute> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          autovalidate: true,
+          autovalidateMode: AutovalidateMode.always,
           child: SingleChildScrollView(
             child: Column(children: buildForm()),
           ),

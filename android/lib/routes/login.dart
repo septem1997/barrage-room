@@ -198,7 +198,7 @@ class _LoginRouteState extends State<LoginRoute> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          autovalidate: true,
+          autovalidateMode: AutovalidateMode.always,
           child: SingleChildScrollView(
             child: Column(children: buildForm()),
           ),
