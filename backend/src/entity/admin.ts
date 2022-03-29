@@ -7,7 +7,7 @@ export class Admin extends BaseEntity{
     @Column({comment:'用户名',length:32})
     username: string;
 
-    @Column({comment:'后台人员姓名',length:32})
+    @Column({comment:'管理人员姓名',length:32})
     name:string;
 
     @Column()

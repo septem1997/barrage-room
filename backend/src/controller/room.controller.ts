@@ -10,6 +10,17 @@ export class RoomController {
   constructor(private readonly roomService: RoomService) {
   }
 
+  @Get()
+  getHello() {
+    for (let i = 0;i<10;i++){
+      const room = new Room()
+      room.roomNo = '00000'+i
+      room.name = '房间'+i
+      room.password = "123123"+i
+      this.roomService.editRoom(null,room);
+    }
+  }
+
   @Get('tags')
   async tags():Promise<RoomTag[]> {
     return await this.roomService.findAllTags();

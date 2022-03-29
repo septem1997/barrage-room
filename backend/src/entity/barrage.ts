@@ -10,6 +10,12 @@ export class Barrage extends BaseEntity{
     @Column()
     content: string;
 
+    @Column()
+    size: number;
+
+    @Column()
+    color: string;
+
     @ManyToOne(() => User,{
         nullable:true
     })

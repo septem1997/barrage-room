@@ -24,7 +24,7 @@ import { Barrage } from '../entity/barrage';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'root',
+      password: 'root123456',
       database: 'barrage_room',
       entities: [Admin,User,RoomTag,Room,Barrage],
       synchronize: true,

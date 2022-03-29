@@ -9,6 +9,7 @@ import { Room } from '../entity/room';
 import { RoomTag } from '../entity/roomTag';
 import { Barrage } from '../entity/barrage';
 import { BarrageDto } from '../dto/barrage.dto';
+import {User} from "../entity/user";
 
 @Injectable()
 export class BarrageService {
@@ -25,10 +26,15 @@ export class BarrageService {
     }
     const barrage = new Barrage();
     const room = new Room();
-    room.id = barrageDto.roomId
+    room.id = 1
+    const user = new User();
+    user.id = 1
+    barrage.creator = user
     barrage.room = room
-    barrage.creator = barrageDto.creator.id?barrageDto.creator:null
     barrage.content = barrageDto.content
+    barrage.createTime = new Date()
+    barrage.color = '#ffffff'
+    barrage.size = 12
     this.repository.save(barrage)
   }
 
