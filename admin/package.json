@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "devDependencies": {
+    "naive-ui": "^2.29.0",
+    "nuxt": "3.0.0-rc.3",
+    "stylus": "^0.57.0",
+    "stylus-loader": "^7.0.0",
+    "unplugin-vue-components": "^0.19.5",
+    "vfonts": "^0.0.3"
+  }
+}
