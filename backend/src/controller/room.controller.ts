@@ -1,24 +1,32 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+import {Body, Controller, Get, HttpException, HttpStatus, Post, Query, Req, UseGuards} from '@nestjs/common';
 import { RoomService } from '../service/room.service';
 import { UserDto } from '../dto/user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RoomTag } from '../entity/roomTag';
 import { Room } from '../entity/room';
+import {PageListConvert} from "../annotations/converter";
 
 @Controller('room')
 export class RoomController {
   constructor(private readonly roomService: RoomService) {
   }
 
-  @Get()
-  getHello() {
-    for (let i = 0;i<10;i++){
-      const room = new Room()
-      room.roomNo = '00000'+i
-      room.name = '房间'+i
-      room.password = "123123"+i
-      this.roomService.editRoom(null,room);
-    }
+  @Get('list')
+  @PageListConvert
+  async list(
+      @Query("pageSize") pageSize: number,
+      @Query("page") page: number
+  ) {
+    return await this.roomService.getRoomList(page,pageSize)
+  }
+
+  @Get('hall/list')
+  @PageListConvert
+  async hallList(
+      @Query("pageSize") pageSize: number,
+      @Query("page") page: number
+  ) {
+    return await this.roomService.getHallList(page,pageSize)
   }
 
   @Get('tags')

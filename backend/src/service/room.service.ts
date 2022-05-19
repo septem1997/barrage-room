@@ -20,6 +20,31 @@ export class RoomService {
   }
 
 
+  async getRoomList(page:number,pageSize:number) {
+    return await this.repository.findAndCount({
+      skip:(page-1)*pageSize,
+      take:pageSize,
+      where:{
+        isPublic:false,
+        disabled:false
+      },
+      relations:['host']
+    })
+  }
+
+  async getHallList(page:number,pageSize:number) {
+    return await this.repository.findAndCount({
+      skip:(page-1)*pageSize,
+      take:pageSize,
+      where:{
+        isPublic:true,
+        disabled:false
+      },
+      relations:['tag']
+    })
+  }
+
+
   async editTag(roomTag: RoomTag) {
     return await this.roomTagRepository.save(roomTag);
   }
