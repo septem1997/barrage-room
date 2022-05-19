@@ -29,9 +29,22 @@ export class RoomController {
     return await this.roomService.getHallList(page,pageSize)
   }
 
+
+  @Get('detail')
+  async detail(
+      @Query("id") id: number,
+  ) {
+    return await this.roomService.findById(id);
+  }
+
   @Get('tags')
   async tags():Promise<RoomTag[]> {
     return await this.roomService.findAllTags();
+  }
+
+  @Get('tags/rooms')
+  async tagsRooms():Promise<RoomTag[]> {
+    return await this.roomService.findAllTagsAndRooms();
   }
 
   @Get('myRoom')

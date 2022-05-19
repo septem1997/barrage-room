@@ -32,6 +32,12 @@ export class RoomService {
     })
   }
 
+  findById(id:number){
+    return this.repository.findOne(id,{
+      relations:['tag']
+    })
+  }
+
   async getHallList(page:number,pageSize:number) {
     return await this.repository.findAndCount({
       skip:(page-1)*pageSize,
@@ -50,6 +56,10 @@ export class RoomService {
   }
 
   async findAllTags(): Promise<RoomTag[]> {
+    return await this.roomTagRepository.find()
+  }
+
+  async findAllTagsAndRooms(): Promise<RoomTag[]> {
     return await this.roomTagRepository.createQueryBuilder('roomTag')
       .select([
         'roomTag.id',
