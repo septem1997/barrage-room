@@ -1,10 +1,23 @@
-import {Body, Controller, Get, HttpException, HttpStatus, Post, Query, Req, UseGuards} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Post,
+  Put,
+  Query,
+  Req,
+  UseGuards
+} from '@nestjs/common';
 import { RoomService } from '../service/room.service';
 import { UserDto } from '../dto/user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RoomTag } from '../entity/roomTag';
 import { Room } from '../entity/room';
 import {PageListConvert} from "../annotations/converter";
+import {RoomDto, TagDto} from "../dto/room.dto";
 
 @Controller('room')
 export class RoomController {
@@ -35,6 +48,11 @@ export class RoomController {
       @Query("id") id: number,
   ) {
     return await this.roomService.findById(id);
+  }
+
+  @Delete('tag')
+  async deleteTag( @Query("id") id: number,) {
+    return await this.roomService.delTagById(id);
   }
 
   @Get('tags')
@@ -76,6 +94,13 @@ export class RoomController {
     @Body() room: Room,@Req() request
   ) {
     return await this.roomService.editRoom(request,room);
+  }
+
+  @Post('editHall')
+  async editHall(
+      @Body() room: RoomDto
+  ) {
+    return await this.roomService.editHall(room);
   }
 
 

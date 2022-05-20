@@ -7,6 +7,7 @@ import { Admin } from '../entity/admin';
 import { AdminDto } from '../dto/admin.dto';
 import { Room } from '../entity/room';
 import { RoomTag } from '../entity/roomTag';
+import {RoomDto} from "../dto/room.dto";
 
 @Injectable()
 export class RoomService {
@@ -37,6 +38,11 @@ export class RoomService {
       relations:['tag']
     })
   }
+  async delTagById(id: number) {
+    const tag = await this.roomTagRepository.findOne(id)
+    tag.disabled = true
+    return this.roomTagRepository.save(tag)
+  }
 
   async getHallList(page:number,pageSize:number) {
     return await this.repository.findAndCount({
@@ -56,7 +62,9 @@ export class RoomService {
   }
 
   async findAllTags(): Promise<RoomTag[]> {
-    return await this.roomTagRepository.find()
+    const tag = new RoomTag();
+    tag.disabled = false
+    return await this.roomTagRepository.find(tag)
   }
 
   async findAllTagsAndRooms(): Promise<RoomTag[]> {
@@ -75,6 +83,24 @@ export class RoomService {
     // });
   }
 
+  async editHall(room: RoomDto) {
+    let saveRoom;
+    if (room.id) {
+      saveRoom = this.repository.findOne(room.id);
+    } else {
+      saveRoom = new Room();
+      const number = await this.repository.count();
+      const roomNoPre = room.tagId ? room.tagId.toString().padStart(3, '0') : '001';
+      room.roomNo = roomNoPre + (number + 1).toString().padStart(6, '0');
+      saveRoom.isPublic = true
+    }
+    if (room.tagId) {
+      const tag = await this.roomTagRepository.findOne(room.tagId);
+      room.tag = tag;
+    }
+    saveRoom = Object.assign(saveRoom, room);
+    return await this.repository.save(saveRoom);
+  }
 
   async editRoom(request, room: Room) {
     // todo roomDto
