@@ -1,5 +1,8 @@
 <template>
-  <n-config-provider :theme="darkTheme">
+  <n-config-provider
+      :locale="zhCN"
+      :date-locale="dateZhCN"
+      :theme="darkTheme">
     <n-layout position="absolute">
       <n-layout-header style="height: 64px; padding: 24px" bordered>
         共享弹幕后台管理
@@ -27,7 +30,7 @@
 
 <script lang="ts">
 import {defineComponent, reactive, ref, useRouter} from "#imports";
-import { darkTheme } from 'naive-ui'
+import { darkTheme,zhCN, dateZhCN } from 'naive-ui'
 export default defineComponent({
   name: "admin",
   components:{
@@ -41,6 +44,10 @@ export default defineComponent({
           {
             label: "大厅列表",
             key: "/hall/"
+          },
+          {
+            label: "标签列表",
+            key: "/hall/tag"
           }
         ]
       }, {
@@ -61,7 +68,9 @@ export default defineComponent({
     return {
       onKeyUpdate,
       treeMenu: treeMenu,
-      darkTheme
+      darkTheme,
+      zhCN,
+      dateZhCN
     }
   }
 })

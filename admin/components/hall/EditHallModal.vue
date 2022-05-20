@@ -27,6 +27,9 @@
           <n-button>上传图标</n-button>
         </n-upload>
       </n-form-item>
+      <n-form-item style="direction: rtl">
+        <n-button @click="saveHall">确定</n-button>
+      </n-form-item>
     </n-form>
   </n-modal>
 </template>
@@ -37,7 +40,7 @@ import {reactive, ref, watch} from "#imports";
 import {$fetch} from "ohmyfetch";
 import {UploadCustomRequestOptions} from "naive-ui";
 
-const emit = defineEmits(['update:visible'])
+const emit = defineEmits(['update:visible','editSuccess'])
 const props = defineProps({
   visible: Boolean,
   id: {
@@ -54,6 +57,16 @@ const customRequest = async ({file}: UploadCustomRequestOptions) => {
     body: formData
   })
   hall.roomIcon = res.data
+}
+const saveHall = async () => {
+  if (!hall.tagId) {
+    return
+  }
+  await $fetch("/api/room/editHall", {
+    method: 'post',
+    body: hall
+  })
+  emit('editSuccess')
 }
 watch(() => props.visible, async (visible) => {
   if (visible) {

@@ -9,7 +9,9 @@
         :pagination="pagination"
         :bordered="false"
     />
-    <edit-hall-modal :id="editId" v-model:visible="editVisible" />
+    <edit-hall-modal
+        @editSuccess="editSuccess"
+        :id="editId" v-model:visible="editVisible" />
   </div>
 </template>
 
@@ -44,6 +46,10 @@ const getList = async (page = 1, pageSize = 10) => {
 }
 const handlePageChange = (page) => {
   getList(page)
+}
+const editSuccess = ()=>{
+  getList(1)
+  editVisible.value = false
 }
 const addHall = ()=>{
   editId.value = null
