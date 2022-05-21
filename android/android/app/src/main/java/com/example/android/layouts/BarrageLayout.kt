@@ -3,9 +3,11 @@ package com.example.android.layouts
 import android.content.Context
 import android.graphics.Color
 import android.graphics.PixelFormat
+import android.os.Build
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.WindowManager
+import androidx.annotation.RequiresApi
 import com.example.android.utils.BiliDanmakuParser
 import master.flame.danmaku.controller.DrawHandler
 import master.flame.danmaku.danmaku.loader.IllegalDataException
@@ -29,6 +31,7 @@ class BarrageLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
     constructor(context: Context) : this(context, null) {}
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0) {}
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun show() {
         super.show()
         floatLayoutParams = WindowManager.LayoutParams(
@@ -42,7 +45,8 @@ class BarrageLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         floatLayoutParams!!.gravity = Gravity.START or Gravity.TOP
         floatLayoutParams!!.x = 0
         floatLayoutParams!!.y = 0
-
+        // todo 写篇博客
+        floatLayoutParams!!.alpha = 0.8F
         mWindowManager.addView(this, floatLayoutParams)
     }
 
@@ -104,7 +108,7 @@ class BarrageLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         addView(mDanmakuView, layoutParams)
     }
 
-    fun addDanmaku(text:String) {
+    fun addDanmaku(text: String) {
         val danmaku = mContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL) ?: return
         danmaku.text = text
         danmaku.padding = 5

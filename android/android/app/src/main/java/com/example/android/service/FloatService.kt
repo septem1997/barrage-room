@@ -3,10 +3,12 @@ package com.example.android.service
 import android.app.Service
 import android.content.Intent
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.example.android.binder.FloatBinder
 import com.example.android.layouts.BarrageFloatButton
 import com.example.android.layouts.BarrageLayout
@@ -33,6 +35,7 @@ class FloatService : Service() {
         this.onSendMsgListener = onSendMsgListener
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
         floatButton = BarrageFloatButton(applicationContext)

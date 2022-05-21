@@ -2,6 +2,7 @@ package com.example.android.layouts
 
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Color
 import android.graphics.PixelFormat
 import android.util.AttributeSet
 import android.view.Gravity
@@ -117,7 +118,6 @@ open class DragViewLayout(context: Context, attrs: AttributeSet?, defStyleAttr: 
         floatLayoutParams!!.y = (mScreenHeight * 0.4).toInt()
         floatLayoutParams!!.width = 144
         floatLayoutParams!!.height = 144
-
         mWindowManager.addView(this, floatLayoutParams)
     }
 
