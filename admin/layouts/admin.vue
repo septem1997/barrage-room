@@ -59,6 +59,15 @@ export default defineComponent({
             key: "/room/"
           }
         ]
+      },{
+        label: "弹幕管理",
+        key: "/barrage/",
+        children: [
+          {
+            label: "弹幕列表",
+            key: "/barrage/"
+          }
+        ]
       }
     ])
     const router = useRouter()
