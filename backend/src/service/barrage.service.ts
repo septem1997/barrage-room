@@ -38,6 +38,17 @@ export class BarrageService {
     this.repository.save(barrage)
   }
 
+  async findAll(page: number, pageSize: number) {
+    return await this.repository.findAndCount({
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      where: {
+        disabled: false
+      },
+      relations: ['creator','room']
+    })
+  }
+
   async findBarrageByRoom(roomId): Promise<Barrage[]> {
     const list =  await this.repository.createQueryBuilder('barrage')
       .select([
