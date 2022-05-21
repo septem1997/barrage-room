@@ -6,6 +6,7 @@ import 'package:android/routes/chat.dart';
 import 'package:android/routes/createRoom.dart';
 import 'package:android/routes/home.dart';
 import 'package:android/routes/login.dart';
+import 'package:android/routes/qrCode.dart';
 import 'package:android/store/currentRoom.dart';
 import 'package:android/store/hallData.dart';
 import 'package:android/store/roomData.dart';
@@ -63,6 +64,7 @@ class MyApp extends StatelessWidget {
         "/login": (context) => LoginRoute(),
         "/createRoom": (context) => CreateRoomRoute(),
         "/chatRoom": (context) => ChatRoute(),
+        "/QRCode":(context) => QRCodeRoute()
       },
     );
   }

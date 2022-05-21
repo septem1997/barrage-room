@@ -17,7 +17,7 @@ class _MyRouteState extends State<MyRoute> {
 
     return Scaffold(
       appBar: AppBar(title: Text("我的")),
-      body: Padding(
+      body: Container(
         padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -49,6 +49,29 @@ class _MyRouteState extends State<MyRoute> {
                         Navigator.pushNamed(context, "/login");
                       }
                     },
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 12),
+                    child: isLogin?Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Divider(thickness: 0.5, color: Colors.black38),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('个人信息', style: TextStyle(fontSize: 18)),
+                              Icon(Icons.chevron_right, size: 28.0, color: Colors.black54),
+                            ]),
+                        Divider(thickness: 0.5, color: Colors.black38),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('设置', style: TextStyle(fontSize: 18)),
+                              Icon(Icons.chevron_right, size: 28.0, color: Colors.black54),
+                            ]),
+                        Divider(thickness: 0.5, color: Colors.black38),
+                      ],
+                    ):null,
                   )
                 ],
               ),

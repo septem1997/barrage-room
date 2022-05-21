@@ -58,6 +58,15 @@ class RoomList extends StatelessWidget {
                   )),
                   IconButton(
                       onPressed: () {
+                        Navigator.of(context).pushNamed('/QRCode');
+                      },
+                      icon: Icon(
+                        Icons.qr_code,
+                        size: 20,
+                        color: Colors.blueGrey,
+                  )),
+                  IconButton(
+                      onPressed: () {
                         Fluttertoast.showToast(
                             msg: "复制房间信息成功"
                         );

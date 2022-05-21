@@ -127,10 +127,10 @@ class _LoginRouteState extends State<LoginRoute> {
           obscureText: !pwdShow,
           //校验密码（不能为空）
           validator: (v) {
-            if(!v.trim().isNotEmpty){
+            if (!v.trim().isNotEmpty) {
               return "确认密码不能为空";
             }
-            if(v!=_pwdController.text){
+            if (v != _pwdController.text) {
               return "两次密码不一致";
             }
             return null;
@@ -154,16 +154,26 @@ class _LoginRouteState extends State<LoginRoute> {
       list.add(Container(
         padding: const EdgeInsets.only(top: 25),
         alignment: Alignment.centerLeft,
-        child: GestureDetector(
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(_status == Status.signup
-                  ? "找不到该用户，检查下是否填写正确了吧"
-                  : "该用户名已被占用，重新输入一个吧"),
-            ));
-          },
-          child: Text(_status == Status.signup ? "想要登录？" : "想要注册？",
-              style: TextStyle(color: Colors.blue)),
+        child: Flex(
+          direction: Axis.horizontal,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(_status == Status.signup
+                      ? "找不到该用户，检查下是否填写正确了吧"
+                      : "该用户名已被占用，重新输入一个吧"),
+                ));
+              },
+              child: Text(_status == Status.signup ? "想要登录？" : "想要注册？",
+                  style: TextStyle(color: Colors.blue)),
+            ),
+            GestureDetector(
+              onTap: () {},
+              child: Text("忘记密码",style:TextStyle(color: Colors.blue),),
+            )
+          ],
         ),
       ));
     }
@@ -236,7 +246,7 @@ class _LoginRouteState extends State<LoginRoute> {
       Timer(Duration(milliseconds: 500), () async {
         Navigator.pop(context);
       });
-    }).catchError((_){
+    }).catchError((_) {
       _btnController.error();
       Timer(Duration(seconds: 1), () async {
         _btnController.reset();
@@ -247,16 +257,17 @@ class _LoginRouteState extends State<LoginRoute> {
   Future<void> login() async {
     if ((_formKey.currentState as FormState).validate()) {
       _btnController.start();
-      var user = User(_unameController.text, null, null,_pwdController.text);
+      var user = User(_unameController.text, null, null, _pwdController.text);
       var future = Request(context).login(user);
       handleData(future);
     }
   }
-  
+
   Future<void> signup() async {
     if ((_formKey.currentState as FormState).validate()) {
       _btnController.start();
-      var user = User(_unameController.text, _nicknameController.text, null,_pwdController.text);
+      var user = User(_unameController.text, _nicknameController.text, null,
+          _pwdController.text);
       var future = Request(context).signup(user);
       handleData(future);
     }
