@@ -74,7 +74,7 @@ class Request {
 
   Future<List<RoomTag>> getHallData() async {
     var r = await dio.get(
-      "/room/tags/rooms",
+      "room/tags/rooms",
       options: _options,
     );
     List<RoomTag> list = [];

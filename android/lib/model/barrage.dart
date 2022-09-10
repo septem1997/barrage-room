@@ -8,10 +8,8 @@ class Barrage {
   String content;
   String sender;
   String createTime;
-
+  int type;
   Barrage({this.id, this.content, this.createTime, this.sender});
-
   factory Barrage.fromJson(Map<String, dynamic> json) => _$BarrageFromJson(json);
-
   Map<String, dynamic> toJson() => _$BarrageToJson(this);
 }
